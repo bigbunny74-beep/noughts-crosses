@@ -29,55 +29,66 @@ jobs:
       - name: Copy web assets
         run: npx cap copy android
 
+      - name: Install image tools
+        run: sudo apt-get install -y imagemagick
+
       - name: Generate icon and splash screen
         run: |
-          mkdir -p android/app/src/main/res/mipmap-hdpi
+          cat > /tmp/icon.svg << 'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+            <rect width="1024" height="1024" rx="220" fill="#ffeaf4"/>
+            <path d="M512 780 C 100 660 50 140 512 300 C 974 140 924 660 512 780 Z" fill="#FFB7C5" stroke="#F0A5B5" stroke-width="16"/>
+            <line x1="432" y1="760" x2="432" y2="860" stroke="#7A7A7A" stroke-width="60" stroke-linecap="round"/>
+            <line x1="592" y1="760" x2="592" y2="860" stroke="#7A7A7A" stroke-width="60" stroke-linecap="round"/>
+            <circle cx="402" cy="860" r="40" fill="#7A7A7A"/>
+            <circle cx="622" cy="860" r="40" fill="#7A7A7A"/>
+            <circle cx="432" cy="580" r="22" fill="#333"/>
+            <circle cx="592" cy="580" r="22" fill="#333"/>
+            <circle cx="362" cy="620" r="42" fill="#FF9EAF" opacity="0.38"/>
+            <circle cx="662" cy="620" r="42" fill="#FF9EAF" opacity="0.38"/>
+            <path d="M 490 650 Q 512 680 534 650" fill="none" stroke="#333" stroke-width="16" stroke-linecap="round"/>
+            <line x1="230" y1="310" x2="370" y2="450" stroke="#f43f5e" stroke-width="28" stroke-linecap="round"/>
+            <line x1="370" y1="310" x2="230" y2="450" stroke="#f43f5e" stroke-width="28" stroke-linecap="round"/>
+            <circle cx="794" cy="380" r="80" fill="none" stroke="#7c3aed" stroke-width="28"/>
+          </svg>
+          EOF
+
+          cat > /tmp/splash.svg << 'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2732 2732">
+            <rect width="2732" height="2732" fill="#ffeaf4"/>
+            <ellipse cx="400" cy="400" rx="700" ry="560" fill="rgba(255,182,213,0.25)"/>
+            <ellipse cx="2400" cy="2400" rx="680" ry="520" fill="rgba(210,180,255,0.18)"/>
+            <path d="M1366 1480 C 954 1360 904 840 1366 1000 C 1828 840 1778 1360 1366 1480 Z" fill="#FFB7C5" stroke="#F0A5B5" stroke-width="20"/>
+            <line x1="1296" y1="1450" x2="1296" y2="1570" stroke="#7A7A7A" stroke-width="75" stroke-linecap="round"/>
+            <line x1="1436" y1="1450" x2="1436" y2="1570" stroke="#7A7A7A" stroke-width="75" stroke-linecap="round"/>
+            <circle cx="1264" cy="1570" r="52" fill="#7A7A7A"/>
+            <circle cx="1468" cy="1570" r="52" fill="#7A7A7A"/>
+            <circle cx="1296" cy="1180" r="34" fill="#333"/>
+            <circle cx="1436" cy="1180" r="34" fill="#333"/>
+            <circle cx="1225" cy="1240" r="60" fill="#FF9EAF" opacity="0.38"/>
+            <circle cx="1507" cy="1240" r="60" fill="#FF9EAF" opacity="0.38"/>
+            <path d="M 1340 1290 Q 1366 1330 1392 1290" fill="none" stroke="#333" stroke-width="24" stroke-linecap="round"/>
+            <text x="1366" y="1720" font-family="Arial Black,Arial" font-size="148" font-weight="900" fill="#c0386e" text-anchor="middle">Noughts &amp; Crosses</text>
+            <text x="1366" y="1840" font-family="Arial,sans-serif" font-size="80" font-weight="700" fill="#d4648a" text-anchor="middle">with Hearty &#x1F9D9;</text>
+            <text x="1366" y="2650" font-family="Arial,sans-serif" font-size="52" fill="#c08090" text-anchor="middle">&#169; 2026 Retro Gaming Slugs</text>
+          </svg>
+          EOF
+
           mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-hdpi
           mkdir -p android/app/src/main/res/mipmap-xhdpi
           mkdir -p android/app/src/main/res/mipmap-xxhdpi
           mkdir -p android/app/src/main/res/mipmap-xxxhdpi
           mkdir -p android/app/src/main/res/drawable
-          npm install -g sharp-cli
-          npx cap copy android
-          node -e "
-          const sharp = require('sharp');
-          const sizes = {
-            'android/app/src/main/res/mipmap-mdpi/ic_launcher.png': 48,
-            'android/app/src/main/res/mipmap-hdpi/ic_launcher.png': 72,
-            'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png': 96,
-            'android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png': 144,
-            'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png': 192,
-          };
-          const icon = \`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'>
-            <rect width='1024' height='1024' rx='220' fill='#ffeaf4'/>
-            <path d='M512 780 C 100 660 50 140 512 300 C 974 140 924 660 512 780 Z' fill='#FFB7C5' stroke='#F0A5B5' stroke-width='16'/>
-            <line x1='432' y1='760' x2='432' y2='860' stroke='#7A7A7A' stroke-width='60' stroke-linecap='round'/>
-            <line x1='592' y1='760' x2='592' y2='860' stroke='#7A7A7A' stroke-width='60' stroke-linecap='round'/>
-            <circle cx='402' cy='860' r='40' fill='#7A7A7A'/>
-            <circle cx='622' cy='860' r='40' fill='#7A7A7A'/>
-            <circle cx='432' cy='580' r='22' fill='#333'/>
-            <circle cx='592' cy='580' r='22' fill='#333'/>
-            <circle cx='362' cy='620' r='42' fill='#FF9EAF' opacity='0.38'/>
-            <circle cx='662' cy='620' r='42' fill='#FF9EAF' opacity='0.38'/>
-            <path d='M 490 650 Q 512 680 534 650' fill='none' stroke='#333' stroke-width='16' stroke-linecap='round'/>
-          \`;
-          const buf = Buffer.from(icon);
-          Object.entries(sizes).forEach(([path, size]) => {
-            sharp(buf).resize(size, size).png().toFile(path);
-          });
-          const splash = \`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2732 2732'>
-            <rect width='2732' height='2732' fill='#ffeaf4'/>
-            <ellipse cx='1366' cy='1100' rx='520' ry='480' fill='#FFB7C5' opacity='0.9'/>
-            <path d='M1366 1480 C 954 1360 904 840 1366 1000 C 1828 840 1778 1360 1366 1480 Z' fill='#FFB7C5' stroke='#F0A5B5' stroke-width='20'/>
-            <circle cx='1296' cy='1180' r='28' fill='#333'/>
-            <circle cx='1436' cy='1180' r='28' fill='#333'/>
-            <path d='M 1346 1240 Q 1366 1270 1386 1240' fill='none' stroke='#333' stroke-width='20' stroke-linecap='round'/>
-            <text x='1366' y='1680' font-family='Arial' font-size='120' font-weight='900' fill='#c0386e' text-anchor='middle'>Noughts &amp; Crosses</text>
-            <text x='1366' y='1780' font-family='Arial' font-size='72' fill='#d4648a' text-anchor='middle'>with Hearty</text>
-          \`;
-          const sbuf = Buffer.from(splash);
-          sharp(sbuf).resize(2732, 2732).png().toFile('android/app/src/main/res/drawable/splash.png');
-          "
+
+          convert -background none /tmp/icon.svg -resize 48x48   android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          convert -background none /tmp/icon.svg -resize 72x72   android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          convert -background none /tmp/icon.svg -resize 96x96   android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          convert -background none /tmp/icon.svg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          convert -background none /tmp/icon.svg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          convert -background "#ffeaf4" /tmp/splash.svg -resize 2732x2732 android/app/src/main/res/drawable/splash.png
+
+          echo "Icons and splash generated successfully"
 
       - name: Make Gradle executable
         run: chmod +x android/gradlew
