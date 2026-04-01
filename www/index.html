@@ -33,21 +33,19 @@
   #portrait-msg p { color: #e879a0; font-size: 14px; font-weight: 700; max-width: 260px; line-height: 1.5; margin-top: -8px; }
 </style>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Lilita+One&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   @keyframes heartyBreathe {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.045); }
+    0%,100% { transform: translateX(-50%) scale(1); }
+    50%      { transform: translateX(-50%) scale(1.045); }
   }
   @keyframes heartySpeaking {
-    0%   { transform: scale(1) rotate(0deg); }
-    15%  { transform: scale(1.08) rotate(-4deg); }
-    30%  { transform: scale(1.06) rotate(4deg); }
-    45%  { transform: scale(1.09) rotate(-3deg); }
-    60%  { transform: scale(1.07) rotate(3deg); }
-    75%  { transform: scale(1.05) rotate(-2deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    0%   { transform: translateX(-50%) scale(1); }
+    20%  { transform: translateX(-50%) scale(1.06); }
+    50%  { transform: translateX(-50%) scale(1.04); }
+    75%  { transform: translateX(-50%) scale(1.07); }
+    100% { transform: translateX(-50%) scale(1); }
   }
   @keyframes blink {
     0%, 90%, 100% { transform: scaleY(1); }
@@ -70,9 +68,9 @@
     50%      { box-shadow: 0 0 28px 8px rgba(255,120,180,0.2); }
   }
   @keyframes wiggle {
-    0%,100% { transform: rotate(0deg); }
-    25% { transform: rotate(-7deg); }
-    75% { transform: rotate(7deg); }
+    0%,100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(-7deg); }
+    75% { transform: translateX(-50%) rotate(7deg); }
   }
   @keyframes cupPop {
     0% { transform: scale(0) rotate(-20deg); opacity: 0; }
@@ -145,8 +143,6 @@
     --btn-diff-inactive-bg: rgba(30,15,50,0.7);
     --btn-diff-inactive-color: #c0a0e0;
     --win-cell-bg: rgba(80,20,50,0.9);
-    --history-bg: rgba(25,10,20,0.7);
-    --history-border: rgba(180,60,110,0.25);
     --modal-bg: #1e0e1a;
     --modal-border: rgba(180,60,110,0.5);
     --input-bg: rgba(40,18,35,0.9);
@@ -175,8 +171,6 @@
     --btn-diff-inactive-bg: rgba(255,255,255,0.6);
     --btn-diff-inactive-color: #a89fc0;
     --win-cell-bg: rgba(255,220,235,0.8);
-    --history-bg: rgba(255,255,255,0.55);
-    --history-border: rgba(255,182,213,0.3);
     --modal-bg: white;
     --modal-border: rgba(255,182,213,0.6);
     --input-bg: rgba(255,255,255,0.9);
@@ -184,11 +178,277 @@
     --series-bg: rgba(255,255,255,0.7);
   }
 
+  /* ════════════════════════════════════════════════════
+     THEME ENGINE — seasonal / mood palettes
+     Each theme overrides the same CSS vars used throughout.
+     body[data-theme="x"] sets the palette.
+     Default (no attribute / "default") = original Hearty pink.
+     ════════════════════════════════════════════════════ */
+
+  /* ── PASTEL SPRING ── mint, lilac, blossom */
+  body[data-theme="spring"]:not(.dark-mode) {
+    --bg: linear-gradient(160deg,#f0faf4 0%,#fdf4ff 35%,#fff0f8 65%,#f4f8ff 100%);
+    --card-bg: rgba(255,255,255,0.78); --card-border: rgba(134,239,172,0.45);
+    --status-bg: rgba(255,255,255,0.72); --board-bg: rgba(255,255,255,0.68);
+    --cell-bg: rgba(240,255,244,0.65); --cell-hover: rgba(220,255,230,0.95);
+    --bubble-bg: white; --bubble-border: #86efac; --bubble-text: #16a34a;
+    --text-main: #15803d; --text-sub: #4ade80; --text-label: #22c55e;
+    --score-label: #6b9e7a; --footer: #86b094;
+    --btn-inactive-bg: rgba(255,255,255,0.72); --btn-inactive-color: #5a8a6a;
+    --btn-inactive-border: rgba(74,222,128,0.25);
+    --btn-diff-inactive-bg: rgba(250,245,255,0.7); --btn-diff-inactive-color: #a78bfa;
+    --win-cell-bg: rgba(187,247,208,0.85); --modal-bg: white;
+    --modal-border: rgba(134,239,172,0.55); --input-bg: rgba(255,255,255,0.92);
+    --input-border: rgba(74,222,128,0.35); --series-bg: rgba(255,255,255,0.72);
+    --theme-accent:#22c55e; --theme-letterbox:#f0faf4; --theme-title:#16a34a;
+    --theme-title-glow:rgba(34,197,94,0.45);
+    --theme-x-color:#16a34a; --theme-o-color:#a855f7;
+    --theme-btn-grad:linear-gradient(135deg,#22c55e,#4ade80);
+    --theme-btn-shadow:rgba(34,197,94,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#22c55e,#4ade80);
+    --theme-burger-shadow:rgba(34,197,94,0.4);
+  }
+  body[data-theme="spring"].dark-mode {
+    --bg: linear-gradient(160deg,#052e16 0%,#0a1f0e 30%,#1a0a2e 65%,#0e1a05 100%);
+    --card-bg:rgba(5,46,22,0.85); --card-border:rgba(74,222,128,0.3);
+    --status-bg:rgba(5,46,22,0.8); --board-bg:rgba(5,46,22,0.75);
+    --cell-bg:rgba(10,60,25,0.7); --cell-hover:rgba(15,80,35,0.95);
+    --bubble-bg:#052e16; --bubble-border:#4ade80; --bubble-text:#86efac;
+    --text-main:#86efac; --text-sub:#4ade80; --text-label:#22c55e;
+    --score-label:#2d6a40; --footer:#2d6a40;
+    --btn-inactive-bg:rgba(10,50,20,0.8); --btn-inactive-color:#86efac;
+    --btn-inactive-border:rgba(74,222,128,0.3);
+    --btn-diff-inactive-bg:rgba(20,5,50,0.7); --btn-diff-inactive-color:#c4b5fd;
+    --win-cell-bg:rgba(20,100,50,0.9); --modal-bg:#052e16;
+    --modal-border:rgba(74,222,128,0.4); --input-bg:rgba(10,50,20,0.9);
+    --input-border:rgba(74,222,128,0.35); --series-bg:rgba(5,40,18,0.8);
+    --theme-accent:#4ade80; --theme-letterbox:#052e16; --theme-title:#86efac;
+    --theme-title-glow:rgba(74,222,128,0.6);
+    --theme-x-color:#4ade80; --theme-o-color:#c084fc;
+    --theme-btn-grad:linear-gradient(135deg,#16a34a,#4ade80);
+    --theme-btn-shadow:rgba(74,222,128,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#16a34a,#4ade80);
+    --theme-burger-shadow:rgba(74,222,128,0.4);
+  }
+
+  /* ── NEON NIGHT ── electric cyan, hot magenta, void */
+  body[data-theme="neon"] {
+    --bg: linear-gradient(160deg,#0d0221 0%,#0a0a2e 35%,#1a0a2e 65%,#0d1a2e 100%);
+    --card-bg:rgba(15,5,40,0.82); --card-border:rgba(0,255,255,0.3);
+    --status-bg:rgba(10,5,30,0.8); --board-bg:rgba(10,5,30,0.75);
+    --cell-bg:rgba(20,5,50,0.65); --cell-hover:rgba(0,255,255,0.08);
+    --bubble-bg:#0d0221; --bubble-border:#00ffff; --bubble-text:#00ffff;
+    --text-main:#00ffff; --text-sub:#ff00ff; --text-label:#00bfff;
+    --score-label:#4080a0; --footer:#305060;
+    --btn-inactive-bg:rgba(15,5,40,0.8); --btn-inactive-color:#00bfff;
+    --btn-inactive-border:rgba(0,255,255,0.25);
+    --btn-diff-inactive-bg:rgba(20,0,50,0.7); --btn-diff-inactive-color:#ff00ff;
+    --win-cell-bg:rgba(0,255,255,0.12); --modal-bg:#0d0221;
+    --modal-border:rgba(0,255,255,0.4); --input-bg:rgba(20,5,50,0.9);
+    --input-border:rgba(0,255,255,0.35); --series-bg:rgba(10,5,35,0.8);
+    --theme-accent:#00ffff; --theme-letterbox:#0d0221; --theme-title:#00ffff;
+    --theme-title-glow:rgba(0,255,255,0.7);
+    --theme-x-color:#00ffff; --theme-o-color:#ff00ff;
+    --theme-btn-grad:linear-gradient(135deg,#00ffff,#0080ff);
+    --theme-btn-shadow:rgba(0,255,255,0.35);
+    --theme-burger-grad:linear-gradient(135deg,#ff00ff,#00ffff);
+    --theme-burger-shadow:rgba(0,255,255,0.5);
+  }
+  body[data-theme="neon"].dark-mode {
+    --bg:linear-gradient(160deg,#050010 0%,#040418 30%,#0e0518 65%,#040e18 100%);
+    --card-bg:rgba(8,2,25,0.92); --cell-bg:rgba(12,2,35,0.8);
+    --theme-letterbox:#050010;
+  }
+
+  /* ── SPOOKY HALLOWEEN ── pumpkin, ghost, void */
+  body[data-theme="halloween"] {
+    --bg:linear-gradient(160deg,#1a0800 0%,#0f0a00 35%,#1a0a00 65%,#0a0508 100%);
+    --card-bg:rgba(30,12,0,0.85); --card-border:rgba(251,146,60,0.35);
+    --status-bg:rgba(25,10,0,0.82); --board-bg:rgba(20,8,0,0.78);
+    --cell-bg:rgba(40,15,0,0.7); --cell-hover:rgba(251,146,60,0.10);
+    --bubble-bg:#1a0800; --bubble-border:#fb923c; --bubble-text:#fed7aa;
+    --text-main:#fb923c; --text-sub:#fdba74; --text-label:#f97316;
+    --score-label:#7c4a20; --footer:#5a3010;
+    --btn-inactive-bg:rgba(35,12,0,0.82); --btn-inactive-color:#fdba74;
+    --btn-inactive-border:rgba(251,146,60,0.3);
+    --btn-diff-inactive-bg:rgba(20,5,30,0.7); --btn-diff-inactive-color:#c084fc;
+    --win-cell-bg:rgba(251,146,60,0.15); --modal-bg:#1a0800;
+    --modal-border:rgba(251,146,60,0.4); --input-bg:rgba(40,15,0,0.9);
+    --input-border:rgba(251,146,60,0.4); --series-bg:rgba(20,8,0,0.82);
+    --theme-accent:#fb923c; --theme-letterbox:#1a0800; --theme-title:#fb923c;
+    --theme-title-glow:rgba(251,146,60,0.65);
+    --theme-x-color:#fb923c; --theme-o-color:#c084fc;
+    --theme-btn-grad:linear-gradient(135deg,#ea580c,#fb923c);
+    --theme-btn-shadow:rgba(251,146,60,0.35);
+    --theme-burger-grad:linear-gradient(135deg,#7c2d12,#fb923c);
+    --theme-burger-shadow:rgba(251,146,60,0.45);
+  }
+  body[data-theme="halloween"].dark-mode {
+    --bg:linear-gradient(160deg,#0a0400 0%,#060400 30%,#0a0300 65%,#050205 100%);
+    --card-bg:rgba(15,6,0,0.92); --cell-bg:rgba(25,8,0,0.82);
+    --theme-letterbox:#0a0400;
+  }
+
+  /* ── OCEAN BREEZE ── aqua, seafoam, deep navy */
+  body[data-theme="ocean"]:not(.dark-mode) {
+    --bg:linear-gradient(160deg,#e0f7fa 0%,#e8f5f0 35%,#e0f0ff 65%,#f0e8ff 100%);
+    --card-bg:rgba(255,255,255,0.76); --card-border:rgba(34,211,238,0.4);
+    --status-bg:rgba(255,255,255,0.72); --board-bg:rgba(255,255,255,0.66);
+    --cell-bg:rgba(224,247,250,0.65); --cell-hover:rgba(200,240,248,0.95);
+    --bubble-bg:white; --bubble-border:#67e8f9; --bubble-text:#0e7490;
+    --text-main:#0e7490; --text-sub:#06b6d4; --text-label:#0891b2;
+    --score-label:#4a8a99; --footer:#5a8a94;
+    --btn-inactive-bg:rgba(255,255,255,0.72); --btn-inactive-color:#0e7490;
+    --btn-inactive-border:rgba(34,211,238,0.25);
+    --btn-diff-inactive-bg:rgba(240,240,255,0.7); --btn-diff-inactive-color:#818cf8;
+    --win-cell-bg:rgba(167,243,250,0.8); --modal-bg:white;
+    --modal-border:rgba(34,211,238,0.5); --input-bg:rgba(255,255,255,0.92);
+    --input-border:rgba(34,211,238,0.35); --series-bg:rgba(255,255,255,0.72);
+    --theme-accent:#06b6d4; --theme-letterbox:#e0f7fa; --theme-title:#0e7490;
+    --theme-title-glow:rgba(6,182,212,0.45);
+    --theme-x-color:#0e7490; --theme-o-color:#6366f1;
+    --theme-btn-grad:linear-gradient(135deg,#0e7490,#06b6d4);
+    --theme-btn-shadow:rgba(6,182,212,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#0e7490,#22d3ee);
+    --theme-burger-shadow:rgba(6,182,212,0.4);
+  }
+  body[data-theme="ocean"].dark-mode {
+    --bg:linear-gradient(160deg,#042f40 0%,#061a28 30%,#08102a 65%,#061428 100%);
+    --card-bg:rgba(4,47,64,0.87); --card-border:rgba(34,211,238,0.32);
+    --status-bg:rgba(4,40,55,0.82); --board-bg:rgba(4,35,50,0.78);
+    --cell-bg:rgba(6,50,70,0.72); --cell-hover:rgba(34,211,238,0.1);
+    --bubble-bg:#042f40; --bubble-border:#22d3ee; --bubble-text:#67e8f9;
+    --text-main:#67e8f9; --text-sub:#22d3ee; --text-label:#06b6d4;
+    --score-label:#1a6070; --footer:#1a6070;
+    --btn-inactive-bg:rgba(6,40,55,0.82); --btn-inactive-color:#67e8f9;
+    --btn-inactive-border:rgba(34,211,238,0.3);
+    --btn-diff-inactive-bg:rgba(15,10,50,0.7); --btn-diff-inactive-color:#a5b4fc;
+    --win-cell-bg:rgba(34,211,238,0.18); --modal-bg:#042f40;
+    --modal-border:rgba(34,211,238,0.4); --input-bg:rgba(6,50,70,0.9);
+    --input-border:rgba(34,211,238,0.35); --series-bg:rgba(4,40,55,0.8);
+    --theme-accent:#22d3ee; --theme-letterbox:#042f40; --theme-title:#67e8f9;
+    --theme-title-glow:rgba(34,211,238,0.6);
+    --theme-x-color:#22d3ee; --theme-o-color:#818cf8;
+    --theme-btn-grad:linear-gradient(135deg,#0e7490,#22d3ee);
+    --theme-btn-shadow:rgba(34,211,238,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#0e7490,#22d3ee);
+    --theme-burger-shadow:rgba(34,211,238,0.4);
+  }
+
+  /* ── GOLDEN SUMMER ── warm gold, coral, sun cream */
+  body[data-theme="summer"]:not(.dark-mode) {
+    --bg:linear-gradient(160deg,#fffbeb 0%,#fff8e0 35%,#fff0d8 65%,#ffefd0 100%);
+    --card-bg:rgba(255,255,255,0.78); --card-border:rgba(251,191,36,0.4);
+    --status-bg:rgba(255,255,255,0.72); --board-bg:rgba(255,255,255,0.66);
+    --cell-bg:rgba(255,251,235,0.68); --cell-hover:rgba(255,243,200,0.95);
+    --bubble-bg:white; --bubble-border:#fbbf24; --bubble-text:#b45309;
+    --text-main:#b45309; --text-sub:#d97706; --text-label:#d97706;
+    --score-label:#8a6030; --footer:#9a7040;
+    --btn-inactive-bg:rgba(255,255,255,0.72); --btn-inactive-color:#92400e;
+    --btn-inactive-border:rgba(251,191,36,0.28);
+    --btn-diff-inactive-bg:rgba(255,248,220,0.72); --btn-diff-inactive-color:#c2410c;
+    --win-cell-bg:rgba(253,230,138,0.85); --modal-bg:white;
+    --modal-border:rgba(251,191,36,0.55); --input-bg:rgba(255,255,255,0.92);
+    --input-border:rgba(251,191,36,0.38); --series-bg:rgba(255,255,255,0.72);
+    --theme-accent:#f59e0b; --theme-letterbox:#fffbeb; --theme-title:#b45309;
+    --theme-title-glow:rgba(245,158,11,0.45);
+    --theme-x-color:#b45309; --theme-o-color:#c2410c;
+    --theme-btn-grad:linear-gradient(135deg,#f59e0b,#fbbf24);
+    --theme-btn-shadow:rgba(245,158,11,0.32);
+    --theme-burger-grad:linear-gradient(135deg,#d97706,#fbbf24);
+    --theme-burger-shadow:rgba(245,158,11,0.45);
+  }
+  body[data-theme="summer"].dark-mode {
+    --bg:linear-gradient(160deg,#2d1a00 0%,#1f1200 30%,#2a1000 65%,#1a0e00 100%);
+    --card-bg:rgba(45,26,0,0.87); --card-border:rgba(251,191,36,0.35);
+    --status-bg:rgba(35,20,0,0.82); --board-bg:rgba(30,18,0,0.78);
+    --cell-bg:rgba(55,32,0,0.72); --cell-hover:rgba(251,191,36,0.1);
+    --bubble-bg:#2d1a00; --bubble-border:#fbbf24; --bubble-text:#fde68a;
+    --text-main:#fde68a; --text-sub:#fbbf24; --text-label:#f59e0b;
+    --score-label:#7a5010; --footer:#5a4010;
+    --btn-inactive-bg:rgba(45,26,0,0.82); --btn-inactive-color:#fde68a;
+    --btn-inactive-border:rgba(251,191,36,0.3);
+    --btn-diff-inactive-bg:rgba(30,10,0,0.7); --btn-diff-inactive-color:#fb923c;
+    --win-cell-bg:rgba(251,191,36,0.18); --modal-bg:#2d1a00;
+    --modal-border:rgba(251,191,36,0.4); --input-bg:rgba(55,32,0,0.9);
+    --input-border:rgba(251,191,36,0.35); --series-bg:rgba(35,20,0,0.8);
+    --theme-accent:#fbbf24; --theme-letterbox:#2d1a00; --theme-title:#fde68a;
+    --theme-title-glow:rgba(251,191,36,0.65);
+    --theme-x-color:#fbbf24; --theme-o-color:#fb923c;
+    --theme-btn-grad:linear-gradient(135deg,#d97706,#fbbf24);
+    --theme-btn-shadow:rgba(251,191,36,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#d97706,#fbbf24);
+    --theme-burger-shadow:rgba(251,191,36,0.45);
+  }
+
+  /* ── Default theme — wire up theme vars for original pink ── */
+  body:not([data-theme]), body[data-theme="default"] {
+    --theme-accent:#f43f5e; --theme-letterbox:#ffeaf4; --theme-title:#f43f5e;
+    --theme-title-glow:rgba(244,63,94,0.45);
+    --theme-x-color:#f43f5e; --theme-o-color:#7c3aed;
+    --theme-btn-grad:linear-gradient(135deg,#f43f5e,#e879a0);
+    --theme-btn-shadow:rgba(244,63,94,0.3);
+    --theme-burger-grad:linear-gradient(135deg,#f43f5e,#e879a0);
+    --theme-burger-shadow:rgba(244,63,94,0.4);
+  }
+  body.dark-mode:not([data-theme]), body.dark-mode[data-theme="default"] {
+    --theme-letterbox:#1a0a12; --theme-title:#ff6b8a;
+    --theme-title-glow:rgba(244,63,94,0.65);
+  }
+
+  /* ── Theme-reactive element overrides ── */
+  .game-title-main { color: var(--theme-title) !important; }
+  .menu-tab {
+    background: var(--theme-burger-grad) !important;
+    box-shadow: 0 4px 18px var(--theme-burger-shadow) !important;
+  }
+  .btn-pill.active-mode, .menu-pill.active-mode {
+    background: var(--theme-btn-grad) !important;
+    box-shadow: 0 3px 14px var(--theme-btn-shadow) !important;
+  }
+  .menu-toggle-icon.active {
+    background: var(--theme-btn-grad) !important;
+    border-color: var(--theme-accent) !important;
+    box-shadow: 0 3px 12px var(--theme-btn-shadow) !important;
+  }
+  .menu-switch.on {
+    background: var(--theme-btn-grad) !important;
+    border-color: var(--theme-accent) !important;
+  }
+
+  /* ── Theme swatch picker (inside side menu) ── */
+  .theme-swatch {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer; transition: all 0.18s;
+    display: inline-flex; align-items: center; justify-content: center;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0; position: relative;
+  }
+  .theme-swatch.selected {
+    border-color: white;
+    box-shadow: 0 0 0 3px var(--theme-accent);
+    transform: scale(1.18);
+  }
+  .theme-swatch:active { transform: scale(0.9); }
+  .theme-swatch-tick {
+    position: absolute; width: 12px; height: 12px;
+    background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s;
+    font-size: 8px; color: #333; font-weight: 900;
+  }
+  .theme-swatch.selected .theme-swatch-tick { opacity: 1; }
+  .theme-swatches-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 4px 4px 10px; align-items: center;
+  }
+
   /* ── VIEWPORT SCALER ── */
   html, body {
     width: 100%; height: 100%;
     overflow: hidden;
-    background: #1a0a12; /* fallback fill behind scaled root */
+    background: #ffeaf4; /* light mode letterbox — toggleDark() updates this */
   }
   #root {
     /* Fixed design canvas — everything is designed at this size */
@@ -198,17 +458,45 @@
     align-items: center; justify-content: flex-start;
     padding: 12px 16px 16px;
     font-family: 'Nunito', sans-serif;
-    background: var(--bg);
+    /* ── BACKGROUND: XO scatter + colour wash + base gradient ──
+       All layers are stacked top-to-bottom (first = topmost).
+       SVG layer: 390×340px, pinned top-center, no-repeat — covers from
+       pixel 0 to 340px (≈ toolbar + controls + Hearty zone + half cards).
+       Colour-wash gradients: radial blooms that add warmth behind Hearty
+       and purple tints in the top corners.
+       Base: var(--bg) gradient fills the rest of the canvas.
+       The SVG symbols are baked with opacity in their stroke colours so
+       no mask is needed — they just sit on top of the gradient stack.   */
+    background:
+      /* XO symbol scatter — light mode (pink X, purple O, opacity ~0.28) */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='390' height='340' viewBox='0 0 390 340'%3E%3C!-- GHOST ZONE y0-110 --%3E%3Ccircle cx='22' cy='18' r='6' fill='none' stroke='rgba(124%2C58%2C237%2C0.28)' stroke-width='1.8'/%3E%3Cg transform='translate(68%2C8) rotate(20)' fill='none' stroke='rgba(244%2C63%2C94%2C0.28)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Ccircle cx='356' cy='14' r='8' fill='none' stroke='rgba(124%2C58%2C237%2C0.28)' stroke-width='2'/%3E%3Cg transform='translate(316%2C6) rotate(-16)' fill='none' stroke='rgba(244%2C63%2C94%2C0.28)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Cg transform='translate(6%2C52) rotate(12)' fill='none' stroke='rgba(244%2C63%2C94%2C0.30)' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='13' y2='13'/%3E%3Cline x1='13' y1='0' x2='0' y2='13'/%3E%3C/g%3E%3Ccircle cx='372' cy='56' r='8' fill='none' stroke='rgba(124%2C58%2C237%2C0.28)' stroke-width='2'/%3E%3Cg transform='translate(104%2C38) rotate(-8)' fill='none' stroke='rgba(244%2C63%2C94%2C0.22)' stroke-width='1.6' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='8' y2='8'/%3E%3Cline x1='8' y1='0' x2='0' y2='8'/%3E%3C/g%3E%3Ccircle cx='280' cy='42' r='5' fill='none' stroke='rgba(124%2C58%2C237%2C0.22)' stroke-width='1.6'/%3E%3Ccircle cx='32' cy='92' r='9' fill='none' stroke='rgba(124%2C58%2C237%2C0.30)' stroke-width='2.2'/%3E%3Cg transform='translate(348%2C86) rotate(-20)' fill='none' stroke='rgba(244%2C63%2C94%2C0.28)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='11' y2='11'/%3E%3Cline x1='11' y1='0' x2='0' y2='11'/%3E%3C/g%3E%3C!-- ACTIVE ZONE y110-280 --%3E%3Cg transform='translate(8%2C118) rotate(-18)' fill='none' stroke='rgba(244%2C63%2C94%2C0.38)' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='24' y2='24'/%3E%3Cline x1='24' y1='0' x2='0' y2='24'/%3E%3C/g%3E%3Ccircle cx='374' cy='132' r='15' fill='none' stroke='rgba(124%2C58%2C237%2C0.38)' stroke-width='3'/%3E%3Ccircle cx='46' cy='152' r='10' fill='none' stroke='rgba(124%2C58%2C237%2C0.34)' stroke-width='2.4'/%3E%3Cg transform='translate(330%2C148) rotate(18)' fill='none' stroke='rgba(244%2C63%2C94%2C0.34)' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='16' y2='16'/%3E%3Cline x1='16' y1='0' x2='0' y2='16'/%3E%3C/g%3E%3Ccircle cx='88' cy='128' r='8' fill='none' stroke='rgba(124%2C58%2C237%2C0.30)' stroke-width='2'/%3E%3Cg transform='translate(288%2C122) rotate(-14)' fill='none' stroke='rgba(244%2C63%2C94%2C0.30)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3Cg transform='translate(112%2C138) rotate(22)' fill='none' stroke='rgba(244%2C63%2C94%2C0.26)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Ccircle cx='268' cy='134' r='6' fill='none' stroke='rgba(124%2C58%2C237%2C0.26)' stroke-width='1.8'/%3E%3Cg transform='translate(4%2C196) rotate(14)' fill='none' stroke='rgba(244%2C63%2C94%2C0.36)' stroke-width='2.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='22' y2='22'/%3E%3Cline x1='22' y1='0' x2='0' y2='22'/%3E%3C/g%3E%3Ccircle cx='370' cy='210' r='14' fill='none' stroke='rgba(124%2C58%2C237%2C0.36)' stroke-width='2.8'/%3E%3Cg transform='translate(54%2C224) rotate(-22)' fill='none' stroke='rgba(244%2C63%2C94%2C0.30)' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='14' y2='14'/%3E%3Cline x1='14' y1='0' x2='0' y2='14'/%3E%3C/g%3E%3Ccircle cx='328' cy='232' r='10' fill='none' stroke='rgba(124%2C58%2C237%2C0.30)' stroke-width='2.3'/%3E%3Ccircle cx='22' cy='256' r='8' fill='none' stroke='rgba(124%2C58%2C237%2C0.28)' stroke-width='2'/%3E%3Cg transform='translate(356%2C260) rotate(-10)' fill='none' stroke='rgba(244%2C63%2C94%2C0.28)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3C!-- CARD ZONE y280-340 --%3E%3Ccircle cx='28' cy='296' r='11' fill='none' stroke='rgba(124%2C58%2C237%2C0.20)' stroke-width='2.4'/%3E%3Cg transform='translate(78%2C304) rotate(24)' fill='none' stroke='rgba(244%2C63%2C94%2C0.20)' stroke-width='1.9' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3Ccircle cx='148' cy='316' r='6' fill='none' stroke='rgba(124%2C58%2C237%2C0.14)' stroke-width='1.7'/%3E%3Cg transform='translate(236%2C310) rotate(-18)' fill='none' stroke='rgba(244%2C63%2C94%2C0.14)' stroke-width='1.7' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Cg transform='translate(298%2C298) rotate(-20)' fill='none' stroke='rgba(244%2C63%2C94%2C0.18)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='13' y2='13'/%3E%3Cline x1='13' y1='0' x2='0' y2='13'/%3E%3C/g%3E%3Ccircle cx='362' cy='306' r='8' fill='none' stroke='rgba(124%2C58%2C237%2C0.18)' stroke-width='2'/%3E%3Cg transform='translate(10%2C328) rotate(16)' fill='none' stroke='rgba(244%2C63%2C94%2C0.08)' stroke-width='1.6' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='8' y2='8'/%3E%3Cline x1='8' y1='0' x2='0' y2='8'/%3E%3C/g%3E%3Ccircle cx='376' cy='332' r='5' fill='none' stroke='rgba(124%2C58%2C237%2C0.08)' stroke-width='1.5'/%3E%3C/svg%3E")
+      top center / 390px 340px no-repeat,
+      /* Colour wash — pink bloom behind Hearty, purple corner tints */
+      radial-gradient(ellipse 280px 130px at 50% 44%,  rgba(244,63,94,0.18)  0%, transparent 68%),
+      radial-gradient(ellipse 190px 140px at 0%   0%,  rgba(124,58,237,0.14) 0%, transparent 62%),
+      radial-gradient(ellipse 170px 120px at 100% 0%,  rgba(244,63,94,0.12)  0%, transparent 62%),
+      radial-gradient(ellipse 240px 60px  at 50%  0%,  rgba(251,182,206,0.16) 0%, transparent 55%),
+      /* Base page gradient */
+      var(--bg);
     position: absolute;
     top: 0; left: 0;
     transform-origin: top left;
     overflow: hidden;
     transition: background 0.4s;
   }
-  /* On mobile, pad top enough to clear the hamburger button */
-  @media (max-width: 699px) {
-    #root { padding-top: 64px; }
+  /* Dark mode: same structure with higher-contrast colours */
+  body.dark-mode #root {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='390' height='340' viewBox='0 0 390 340'%3E%3Ccircle cx='22' cy='18' r='6' fill='none' stroke='rgba(196%2C181%2C253%2C0.40)' stroke-width='1.8'/%3E%3Cg transform='translate(68%2C8) rotate(20)' fill='none' stroke='rgba(249%2C168%2C212%2C0.40)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Ccircle cx='356' cy='14' r='8' fill='none' stroke='rgba(196%2C181%2C253%2C0.40)' stroke-width='2'/%3E%3Cg transform='translate(316%2C6) rotate(-16)' fill='none' stroke='rgba(249%2C168%2C212%2C0.40)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Cg transform='translate(6%2C52) rotate(12)' fill='none' stroke='rgba(249%2C168%2C212%2C0.42)' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='13' y2='13'/%3E%3Cline x1='13' y1='0' x2='0' y2='13'/%3E%3C/g%3E%3Ccircle cx='372' cy='56' r='8' fill='none' stroke='rgba(196%2C181%2C253%2C0.40)' stroke-width='2'/%3E%3Cg transform='translate(104%2C38) rotate(-8)' fill='none' stroke='rgba(249%2C168%2C212%2C0.32)' stroke-width='1.6' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='8' y2='8'/%3E%3Cline x1='8' y1='0' x2='0' y2='8'/%3E%3C/g%3E%3Ccircle cx='280' cy='42' r='5' fill='none' stroke='rgba(196%2C181%2C253%2C0.32)' stroke-width='1.6'/%3E%3Ccircle cx='32' cy='92' r='9' fill='none' stroke='rgba(196%2C181%2C253%2C0.42)' stroke-width='2.2'/%3E%3Cg transform='translate(348%2C86) rotate(-20)' fill='none' stroke='rgba(249%2C168%2C212%2C0.40)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='11' y2='11'/%3E%3Cline x1='11' y1='0' x2='0' y2='11'/%3E%3C/g%3E%3Cg transform='translate(8%2C118) rotate(-18)' fill='none' stroke='rgba(249%2C168%2C212%2C0.55)' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='24' y2='24'/%3E%3Cline x1='24' y1='0' x2='0' y2='24'/%3E%3C/g%3E%3Ccircle cx='374' cy='132' r='15' fill='none' stroke='rgba(196%2C181%2C253%2C0.55)' stroke-width='3'/%3E%3Ccircle cx='46' cy='152' r='10' fill='none' stroke='rgba(196%2C181%2C253%2C0.50)' stroke-width='2.4'/%3E%3Cg transform='translate(330%2C148) rotate(18)' fill='none' stroke='rgba(249%2C168%2C212%2C0.50)' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='16' y2='16'/%3E%3Cline x1='16' y1='0' x2='0' y2='16'/%3E%3C/g%3E%3Ccircle cx='88' cy='128' r='8' fill='none' stroke='rgba(196%2C181%2C253%2C0.44)' stroke-width='2'/%3E%3Cg transform='translate(288%2C122) rotate(-14)' fill='none' stroke='rgba(249%2C168%2C212%2C0.44)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3Cg transform='translate(112%2C138) rotate(22)' fill='none' stroke='rgba(249%2C168%2C212%2C0.38)' stroke-width='1.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Ccircle cx='268' cy='134' r='6' fill='none' stroke='rgba(196%2C181%2C253%2C0.38)' stroke-width='1.8'/%3E%3Cg transform='translate(4%2C196) rotate(14)' fill='none' stroke='rgba(249%2C168%2C212%2C0.52)' stroke-width='2.8' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='22' y2='22'/%3E%3Cline x1='22' y1='0' x2='0' y2='22'/%3E%3C/g%3E%3Ccircle cx='370' cy='210' r='14' fill='none' stroke='rgba(196%2C181%2C253%2C0.52)' stroke-width='2.8'/%3E%3Cg transform='translate(54%2C224) rotate(-22)' fill='none' stroke='rgba(249%2C168%2C212%2C0.44)' stroke-width='2.2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='14' y2='14'/%3E%3Cline x1='14' y1='0' x2='0' y2='14'/%3E%3C/g%3E%3Ccircle cx='328' cy='232' r='10' fill='none' stroke='rgba(196%2C181%2C253%2C0.44)' stroke-width='2.3'/%3E%3Ccircle cx='22' cy='256' r='8' fill='none' stroke='rgba(196%2C181%2C253%2C0.40)' stroke-width='2'/%3E%3Cg transform='translate(356%2C260) rotate(-10)' fill='none' stroke='rgba(249%2C168%2C212%2C0.40)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3Ccircle cx='28' cy='296' r='11' fill='none' stroke='rgba(196%2C181%2C253%2C0.28)' stroke-width='2.4'/%3E%3Cg transform='translate(78%2C304) rotate(24)' fill='none' stroke='rgba(249%2C168%2C212%2C0.28)' stroke-width='1.9' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='12' y2='12'/%3E%3Cline x1='12' y1='0' x2='0' y2='12'/%3E%3C/g%3E%3Ccircle cx='148' cy='316' r='6' fill='none' stroke='rgba(196%2C181%2C253%2C0.18)' stroke-width='1.7'/%3E%3Cg transform='translate(236%2C310) rotate(-18)' fill='none' stroke='rgba(249%2C168%2C212%2C0.18)' stroke-width='1.7' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='9' y2='9'/%3E%3Cline x1='9' y1='0' x2='0' y2='9'/%3E%3C/g%3E%3Cg transform='translate(298%2C298) rotate(-20)' fill='none' stroke='rgba(249%2C168%2C212%2C0.24)' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='13' y2='13'/%3E%3Cline x1='13' y1='0' x2='0' y2='13'/%3E%3C/g%3E%3Ccircle cx='362' cy='306' r='8' fill='none' stroke='rgba(196%2C181%2C253%2C0.24)' stroke-width='2'/%3E%3Cg transform='translate(10%2C328) rotate(16)' fill='none' stroke='rgba(249%2C168%2C212%2C0.10)' stroke-width='1.6' stroke-linecap='round'%3E%3Cline x1='0' y1='0' x2='8' y2='8'/%3E%3Cline x1='8' y1='0' x2='0' y2='8'/%3E%3C/g%3E%3Ccircle cx='376' cy='332' r='5' fill='none' stroke='rgba(196%2C181%2C253%2C0.10)' stroke-width='1.5'/%3E%3C/svg%3E")
+      top center / 390px 340px no-repeat,
+      radial-gradient(ellipse 280px 130px at 50% 44%,  rgba(244,63,94,0.30)  0%, transparent 68%),
+      radial-gradient(ellipse 190px 140px at 0%   0%,  rgba(124,58,237,0.24) 0%, transparent 62%),
+      radial-gradient(ellipse 170px 120px at 100% 0%,  rgba(244,63,94,0.20)  0%, transparent 62%),
+      radial-gradient(ellipse 240px 60px  at 50%  0%,  rgba(180,40,90,0.20)  0%, transparent 55%),
+      linear-gradient(160deg, #1a0a12 0%, #12100e 30%, #0a1020 65%, #130a22 100%);
   }
+  /* Hamburger is position:fixed — floats above canvas, no padding needed */
+  #root { padding-top: 12px; }
   #root::before {
     content: '';
     position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -287,8 +575,74 @@
     gap: 8px; width: 100%; max-width: 720px;
     flex: 1; min-height: 0;
   }
-  @media (min-width: 700px) {
-    .main-layout { flex-direction: row; align-items: center; justify-content: center; gap: 20px; }
+  /* ── GAME TITLE — wordmark ── */
+  @keyframes titleGlow {
+    0%,100% { text-shadow:
+      0 0 12px rgba(244,63,94,0.55),
+      0 0 28px rgba(244,63,94,0.30),
+      0 2px 0 rgba(140,20,50,0.60); }
+    50% { text-shadow:
+      0 0 18px rgba(244,63,94,0.80),
+      0 0 40px rgba(244,63,94,0.45),
+      0 2px 0 rgba(140,20,50,0.60); }
+  }
+  @keyframes titleGlowLight {
+    0%,100% { text-shadow:
+      0 0 8px rgba(244,63,94,0.30),
+      0 1px 0 rgba(180,40,80,0.35); }
+    50% { text-shadow:
+      0 0 16px rgba(244,63,94,0.50),
+      0 1px 0 rgba(180,40,80,0.35); }
+  }
+  .game-title {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    gap: 2px;
+    padding: 0 60px; /* clear the hamburger on the left */
+  }
+  /* "Hearty" — the hero wordmark */
+  .game-title-main {
+    font-family: 'Lilita One', 'Nunito', sans-serif;
+    font-weight: 400; /* Lilita One is inherently heavy */
+    font-size: 28px;
+    letter-spacing: 0.03em;
+    color: #f43f5e;
+    line-height: 1;
+    text-align: center;
+    animation: titleGlowLight 3.5s ease-in-out infinite;
+    /* Emboss: light highlight top, deep shadow bottom */
+    text-shadow:
+      0 0 8px rgba(244,63,94,0.30),
+      0 1px 0 rgba(180,40,80,0.35);
+    position: relative;
+  }
+  body.dark-mode .game-title-main {
+    color: #ff6b8a;
+    animation: titleGlow 3.5s ease-in-out infinite;
+  }
+  /* "Noughts & Crosses" — tight uppercase descriptor */
+  .game-title-sub {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    opacity: 0.75;
+    line-height: 1;
+    text-align: center;
+  }
+  /* Decorative ✦ glyphs flanking the sub text */
+  .game-title-sub::before,
+  .game-title-sub::after {
+    content: ' ✦ ';
+    font-size: 7px;
+    opacity: 0.6;
   }
 
   /* ── HEARTY (perched on P1 score card) ── */
@@ -298,61 +652,69 @@
     position: absolute;
     bottom: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%); /* fallback when no animation active */
     margin-bottom: -6px;
     z-index: 5;
     pointer-events: none;
+    will-change: transform;
+    /* Soft drop-shadow that follows the SVG heart shape — not the bounding box */
+    filter: drop-shadow(0px 4px 8px rgba(180, 40, 80, 0.30))
+            drop-shadow(0px 1px 2px rgba(100, 0, 40, 0.18));
   }
   .hearty-svg-wrap.breathing { animation: heartyBreathe 3s ease-in-out infinite; }
   .hearty-svg-wrap.speaking  { animation: heartySpeaking 0.7s ease-in-out; }
   .hearty-svg-wrap.wiggling  { animation: wiggle 0.5s ease-in-out infinite; }
-  /* cup overlay: scaled for smaller Hearty */
+  /* cup overlay: scaled for larger Hearty */
   .gold-cup-overlay {
-    position: absolute; top: -4px; right: -4px; width: 26px; height: 26px;
+    position: absolute; top: -4px; right: -4px; width: 33px; height: 33px;
     animation: cupPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 10;
+    filter: drop-shadow(0px 2px 5px rgba(160, 100, 0, 0.40))
+            drop-shadow(0px 1px 1px rgba(80, 40, 0, 0.25));
   }
 
-  /* ── SPEECH BUBBLE — floats above the score panel, to the right of Hearty ── */
+  /* ── SPEECH BUBBLE — sits to the right of Hearty, tail points left toward Hearty ── */
   .speech-bubble {
     position: absolute;
-    /* sits above the score panel row, aligned to start just right of Hearty on P1 card */
-    bottom: calc(100% - 52px); /* pull it up: aligns bubble top with Hearty's head area */
-    left: clamp(90px, 25vw, 115px); /* prevent clipping on narrow screens */
+    /* vertically centred in the Hearty zone, to the right of Hearty on P1 card */
+    bottom: calc(100% - 118px); /* aligns bubble lower, level with Hearty's body centre */
+    left: 100px; /* starts just right of Hearty (which sits on P1 card ~left:50%) */
     background: var(--bubble-bg);
     border: 2.5px solid var(--bubble-border); border-radius: 20px;
     padding: 8px 12px;
-    width: clamp(150px, 52vw, 185px); /* fluid width, won't overflow viewport */
+    width: 200px; /* fixed canvas px — scaler handles device width */
     min-height: 54px;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(244,63,94,0.1);
+    box-shadow:
+      0 2px 6px  rgba(180, 40, 90, 0.18),
+      0 6px 24px rgba(244, 63, 94, 0.13);
     transition: opacity 0.3s, background 0.3s, border-color 0.3s;
     z-index: 10;
   }
   .speech-bubble.visible { opacity:1; animation: bubbleIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
   .speech-bubble.hidden  { opacity:0; pointer-events:none; }
   .speech-bubble p { font-size: 11px; font-weight: 700; color: var(--bubble-text); line-height: 1.4; text-align: center; }
-  /* tail points down-left toward Hearty below */
+  /* tail points left toward Hearty */
   .bubble-tail {
     position: absolute;
-    left: 22px;
-    bottom: -12px;
-    top: auto;
-    transform: none;
+    left: -10px;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
     width:0; height:0;
-    border-left: 10px solid transparent; border-right: 10px solid transparent;
-    border-top: 12px solid var(--bubble-bg);
-    transition: border-top-color 0.3s;
+    border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+    border-right: 12px solid var(--bubble-bg);
+    transition: border-right-color 0.3s;
   }
   .bubble-tail-border {
     position: absolute;
-    left: 19px;
-    bottom: -16px;
-    top: auto;
-    transform: none;
+    left: -14px;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
     width:0; height:0;
-    border-left: 13px solid transparent; border-right: 13px solid transparent;
-    border-top: 15px solid var(--bubble-border); z-index: -1;
-    transition: border-top-color 0.3s;
+    border-top: 13px solid transparent; border-bottom: 13px solid transparent;
+    border-right: 15px solid var(--bubble-border); z-index: -1;
+    transition: border-right-color 0.3s;
   }
 
   /* ── BOARD COL ── */
@@ -363,8 +725,20 @@
   .score-panel {
     display: flex; gap: 10px; justify-content: center; flex-wrap: nowrap;
     position: relative; width: 100%;
-    padding-top: 118px; /* room for Hearty (60px) + bubble height above (~54px) + spacing */
+    padding-top: 134px; /* room for Hearty (76px) + bubble height above (~54px) + spacing */
   }
+  /* Moved to #root::after so it starts at absolute pixel-0 of the screen
+     canvas, runs behind the toolbar, controls, burger zone, and Hearty,
+     and fades out at ~half the score-card height.
+     z-index: 0 keeps it below all #root > * children (z-index: 1).
+     The burger button is position:fixed z-index:400 so it is always above.
+     Height = 64px mobile padding + 44px toolbar + 6px gap + 46px controls
+              + 10px gap + 134px score-panel padding + 36px half-card = 340px.
+     Expressed as a percentage of the 780px root canvas: 340/780 = 43.6%.
+     Both the colour wash and symbol SVG use this same height so the bottom
+     edge is always consistent regardless of device scaling.               */
+
+  /* XO backdrop baked into #root background — see #root rule below */
 
   /* P1 card has relative positioning so Hearty can be absolutely placed on it */
   .score-card {
@@ -374,12 +748,13 @@
     padding: 8px 10px; flex: 1; min-width: 0;
     transition: background 0.3s, border-color 0.3s;
     position: relative; /* needed for .hearty-svg-wrap absolute positioning */
+    z-index: 1; /* sit above the z-index:0 XO backdrop pseudo-elements */
   }
-  .score-num { font-size: clamp(20px, 6vw, 28px); font-weight: 900; }
+  .score-num { font-size: 26px; font-weight: 900; }
   .score-num.x    { color: #f43f5e; }
   .score-num.draw { color: #94a3b8; }
   .score-num.o    { color: #7c3aed; }
-  .score-label { font-size: clamp(10px, 2.8vw, 12px); color: var(--score-label); margin-top: 2px; font-weight: 700; }
+  .score-label { font-size: 12px; color: var(--score-label); margin-top: 2px; font-weight: 700; }
 
   /* ── SERIES PROGRESS ── */
   .series-bar {
@@ -408,7 +783,7 @@
   }
   .status-bar.result { border-color: rgba(244,63,94,0.45); background: rgba(255,240,248,0.9); animation: pulseGlow 2s ease-in-out infinite; }
   body.dark-mode .status-bar.result { background: rgba(60,10,30,0.9); }
-  .status-text { font-family: 'DM Mono', monospace; font-weight: 700; font-size: clamp(12px, 3.5vw, 14px); color: #7a4060; }
+  .status-text { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; color: #7a4060; }
   body.dark-mode .status-text { color: #e090b0; }
   .status-text.win-x { color: #f43f5e; }
   .status-text.win-o { color: #7c3aed; }
@@ -418,7 +793,7 @@
     border-radius: 28px; padding: 14px;
     background: var(--board-bg); border: 2px solid var(--card-border);
     backdrop-filter: blur(16px); box-shadow: 0 8px 40px rgba(244,63,94,0.1);
-    width: min(310px, calc(100vw - 48px)); transition: background 0.3s, border-color 0.3s;
+    width: 310px; transition: background 0.3s, border-color 0.3s;
   }
 
   .board-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
@@ -449,7 +824,7 @@
   .btn-row {
     display: flex; gap: 8px; align-items: stretch;
     justify-content: center;
-    width: min(310px, calc(100vw - 48px)); /* match fluid board width */
+    width: 310px; /* match board width — scaler handles device fit */
   }
 
   .new-game-btn {
@@ -480,20 +855,6 @@
   .undo-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.07); }
   .undo-btn:disabled { opacity: 0.35; cursor: default; }
 
-  /* ── HISTORY LOG ── */
-  .history-log {
-    background: var(--history-bg); border: 2px solid var(--history-border);
-    border-radius: 14px; padding: 6px 14px;
-    font-size: 11px; font-weight: 700; color: var(--score-label);
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    justify-content: center; max-width: min(310px, calc(100vw - 48px));
-    backdrop-filter: blur(8px); transition: all 0.3s;
-  }
-  .history-label { color: var(--text-sub); font-size: 10px; letter-spacing: 0.06em; }
-  .hist-chip {
-    font-size: 13px; display: inline-block;
-  }
-
   /* ── FOOTER ── */
   .footer { margin-top: 18px; font-size: 11px; color: var(--footer); text-align: center; font-weight: 600; }
 
@@ -505,12 +866,6 @@
     background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
     padding: 16px;
-  }
-  @media (max-width: 699px) {
-    .modal-overlay {
-      align-items: flex-start;
-      padding-top: 40px;
-    }
   }
   .modal-overlay.hidden { display: none; }
   .modal-box {
@@ -585,11 +940,6 @@
     transition: all 0.18s;
   }
   .match-banner-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
-  .match-banner-btn.secondary {
-    background: var(--card-bg); color: var(--text-sub);
-    border: 2px solid var(--card-border);
-    box-shadow: none;
-  }
 
   /* ── AI WATCH BADGE ── */
   .watch-badge {
@@ -609,11 +959,9 @@
     to   { transform: translateX(-100%); opacity: 0.6; }
   }
 
-  /* Hide the top-toolbar on mobile (handled by side menu) */
-  @media (max-width: 699px) {
-    .top-toolbar { display: none !important; }
-    .controls { display: none !important; }
-  }
+  /* Top toolbar and inline controls hidden — side menu handles all controls */
+  .top-toolbar { display: none !important; }
+  .controls    { display: none !important; }
 
   /* Hamburger button — fixed top-left, proper 44×44 tap target */
   .menu-tab {
@@ -689,6 +1037,7 @@
     touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .menu-close-btn:active { transform: scale(0.9); }
+  body.dark-mode .menu-close-btn { color: #ffffff; }
 
   /* Menu sections */
   .menu-section {
@@ -844,33 +1193,22 @@
     .menu-footer { padding: 8px 16px; }
   }
 
-  /* Swipe hint on desktop shows menu-tab only on small screens */
-  @media (min-width: 700px) {
-    .menu-tab { display: none; }
-  }
-
-  /* Desktop: show controls as normal */
-  @media (min-width: 700px) {
-    .top-toolbar { display: flex !important; }
-    .controls { display: flex !important; }
-  }
+  /* Burger menu and side menu always used — no desktop toolbar mode */
 
   /* Disable long-press / text selection everywhere on mobile */
-  @media (max-width: 900px) {
-    * {
-      -webkit-user-select: none !important;
-      user-select: none !important;
-      -webkit-touch-callout: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    input, textarea {
-      -webkit-user-select: text !important;
-      user-select: text !important;
-    }
-    img, a {
-      -webkit-user-drag: none;
-      pointer-events: auto;
-    }
+  * {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  input, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+  }
+  img, a {
+    -webkit-user-drag: none;
+    pointer-events: auto;
   }
 </style>
 <script>
@@ -895,7 +1233,7 @@
       root.style.transformOrigin = 'top left';
       // Centre the scaled root in the viewport
       root.style.left = Math.round((vw - DESIGN_W * scale) / 2) + 'px';
-      root.style.top  = Math.round((vh - DESIGN_H * scale) / 2) + 'px';
+      root.style.top  = '0px';
     }
 
     // Side menu, menu-tab, menu-overlay are position:fixed so they sit outside
@@ -993,6 +1331,15 @@
   <div class="menu-section">
     <div class="menu-section-label">Match Format</div>
     <div class="menu-pill-group" id="menuSeriesPills"></div>
+  </div>
+
+  <div class="menu-section-divider"></div>
+
+  <!-- THEME PICKER -->
+  <div class="menu-section">
+    <div class="menu-section-label">Theme</div>
+    <div class="theme-swatches-row" id="menuThemeSwatches"></div>
+    <div id="menuThemeLabel" style="font-size:10px;font-weight:700;color:var(--text-sub);padding:0 4px 6px;"></div>
   </div>
 
   <div class="menu-section-divider"></div>
@@ -1106,7 +1453,6 @@
     <div class="match-banner-score" id="matchScore"></div>
     <div>
       <button class="match-banner-btn" onClick="startNewMatch()">New Match ✦</button>
-      <button class="match-banner-btn secondary" onClick="closeMatchBanner()">Keep Scores</button>
     </div>
   </div>
 </div>
@@ -1261,6 +1607,9 @@ function renderSideMenu() {
       nameDesc.textContent = playerNames.X + ' vs ' + playerNames.O;
     }
   }
+
+  // Theme swatches
+  renderThemeSwatches();
 }
 
 // ── Background hearts ──
@@ -1537,7 +1886,7 @@ function heartySVG(showCup, difficulty, is2P){
     <circle cx="60" cy="30" r="2.5" fill="#fbbf24"/>
     <circle cx="80" cy="35" r="2" fill="#fbbf24"/>
   </g>` : '';
-  return `<svg viewBox="0 0 200 200" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+  return `<svg viewBox="0 0 200 200" width="76" height="76" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="hbg" cx="45%" cy="38%" r="60%">
       <stop offset="0%" stop-color="#ffd6e0"/><stop offset="55%" stop-color="#FFB7C5"/><stop offset="100%" stop-color="#f095aa"/>
@@ -1566,17 +1915,17 @@ function heartySVG(showCup, difficulty, is2P){
 let state = {
   board: Array(9).fill(null), xIsNext: true, result: null,
   scores: { X:0, O_Human:0, O_Hearty:0, draw:0 },
-  mode: 'ai', difficulty: 'hard',
+  mode: 'ai', difficulty: 'easy',
   bubbleText: pick('welcome'), bubbleVisible: true,
   heartyAnim: 'breathing', aiThinking: false, showCup: false,
   lastBubbleTime: Date.now(), winStreakX: 0, winStreakP2: 0,
   // New state
   seriesMode: 'none',    // 'none' | 'bo3' | 'bo5'
   seriesX: 0, seriesO: 0, seriesD: 0,
-  history: [],           // array of 'X'|'O'|'D'
   watchMode: false,      // AI vs AI
   undoStack: [],         // [{board, xIsNext}]
   darkMode: false,
+  bubbleLockedUntil: 0,  // timestamp — speech bubble locked after trophy/streak/Hearty win
 };
 let aiTimeout=null, speakAnimTimeout=null, watchTimeout=null;
 const dom = {};
@@ -1599,7 +1948,8 @@ function render(){
   const seriesButtons = !s.watchMode
     ? ['none','bo3','bo5'].map(m=>`<button class="btn-pill ${s.seriesMode===m?'active-series':'inactive-series'}" onclick="setSeriesMode('${m}')">${m==='none'?'Free Play':m==='bo3'?'Best of 3':'Best of 5'}</button>`).join('')
     : '';
-  dom.controls.innerHTML = modeButtons + (diffButtons ? '<span style="margin:0 2px;color:var(--card-border)">|</span>' + diffButtons : '') + '<br style="width:100%"/>' + seriesButtons;
+  var controlsHTML = modeButtons + (diffButtons ? '<span style="margin:0 2px;color:var(--card-border)">|</span>' + diffButtons : '') + '<br style="width:100%"/>' + seriesButtons;
+  if(dom.controls.innerHTML !== controlsHTML) dom.controls.innerHTML = controlsHTML;
 
   // Scores
   const currentOScore = s.mode==='2p' ? s.scores.O_Human : s.scores.O_Hearty;
@@ -1640,8 +1990,8 @@ function render(){
     if(val !== prevVal){
       cell.dataset.val = val||'';
       let inner = '';
-      if(val==='X') inner=`<svg viewBox="0 0 44 44"><line x1="8" y1="8" x2="36" y2="36" stroke="#f43f5e" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:40;stroke-dashoffset:0;animation:drawLine 0.25s ease-out"/><line x1="36" y1="8" x2="8" y2="36" stroke="#f43f5e" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:40;stroke-dashoffset:0;animation:drawLine 0.25s ease-out 0.06s"/></svg>`;
-      else if(val==='O') inner=`<svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="14" fill="none" stroke="#7c3aed" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:88;stroke-dashoffset:0;animation:drawCircle 0.3s ease-out"/></svg>`;
+      if(val==='X') inner=`<svg viewBox="0 0 44 44"><line x1="8" y1="8" x2="36" y2="36" stroke="#f43f5e" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:40;stroke-dashoffset:40;animation:drawLine 0.25s ease-out forwards"/><line x1="36" y1="8" x2="8" y2="36" stroke="#f43f5e" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:40;stroke-dashoffset:40;animation:drawLine 0.25s ease-out 0.06s forwards"/></svg>`;
+      else if(val==='O') inner=`<svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="14" fill="none" stroke="#7c3aed" stroke-width="4.5" stroke-linecap="round" style="stroke-dasharray:88;stroke-dashoffset:88;animation:drawCircle 0.3s ease-out forwards"/></svg>`;
       cell.innerHTML=`<div class="cell-inner">${inner}</div>`;
     }
   });
@@ -1653,8 +2003,17 @@ function render(){
     dom.bubbleContent.innerHTML = `<p>${s.bubbleText}</p>`;
   }
   dom.bubble.className = `speech-bubble ${s.bubbleVisible?'visible':'hidden'}`;
-  dom.heartyWrap.innerHTML = heartySVG(s.showCup, s.difficulty, s.mode==='2p');
-  dom.heartyWrap.className = `hearty-svg-wrap ${s.heartyAnim}`;
+
+  // Hearty — only rebuild SVG when its content params change, not on every render.
+  // Rebuilding innerHTML resets the DOM node and kills the breathing animation,
+  // causing a visible flicker whenever the speech bubble updates.
+  var heartyKey = (s.showCup?'1':'0') + '|' + s.difficulty + '|' + (s.mode==='2p'?'1':'0');
+  if(dom.heartyWrap._heartyKey !== heartyKey){
+    dom.heartyWrap._heartyKey = heartyKey;
+    dom.heartyWrap.innerHTML = heartySVG(s.showCup, s.difficulty, s.mode==='2p');
+  }
+  var heartyClass = `hearty-svg-wrap ${s.heartyAnim}`;
+  if(dom.heartyWrap.className !== heartyClass) dom.heartyWrap.className = heartyClass;
 
   // Undo button
   const canUndo = !s.result && !s.aiThinking && !s.watchMode && s.undoStack.length > 0;
@@ -1699,14 +2058,43 @@ function render(){
 }
 
 // ── speak ──
-function speak(text){
-  setState({bubbleVisible:false});
-  setTimeout(()=>{
-    setState({bubbleText:text, bubbleVisible:true, heartyAnim:'speaking', lastBubbleTime:Date.now()});
+// force=true bypasses the bubble lock (used for win/streak/Hearty-win messages)
+function speak(text, force){
+  if(!force && Date.now() < state.bubbleLockedUntil) return;
+
+  // Manipulate bubble and Hearty animation directly — no setState/render.
+  // Going through setState triggers a full render() which repaints the
+  // entire score panel, causing Hearty's drop-shadow filter to flicker.
+  state.bubbleText    = text;
+  state.bubbleVisible = false;
+  state.lastBubbleTime = Date.now();
+
+  // Hide bubble immediately, without touching Hearty
+  dom.bubble.className = 'speech-bubble hidden';
+
+  clearTimeout(speakAnimTimeout);
+
+  setTimeout(function(){
+    state.bubbleText    = text;
+    state.bubbleVisible = true;
+    state.heartyAnim    = 'speaking';
+
+    // Update bubble content and show
+    dom.bubbleContent.innerHTML = '<p>' + text + '</p>';
+    dom.bubble.className = 'speech-bubble visible';
+
+    // Switch Hearty animation class directly — no render(), no DOM rebuild
+    var heartyClass = 'hearty-svg-wrap speaking';
+    if(dom.heartyWrap.className !== heartyClass) dom.heartyWrap.className = heartyClass;
+
     SFX.hearty();
-    clearTimeout(speakAnimTimeout);
-    speakAnimTimeout = setTimeout(()=>setState({heartyAnim:'breathing'}), 750);
-  }, 300);
+
+    speakAnimTimeout = setTimeout(function(){
+      state.heartyAnim = 'breathing';
+      var breathClass = 'hearty-svg-wrap breathing';
+      if(dom.heartyWrap.className !== breathClass) dom.heartyWrap.className = breathClass;
+    }, 750);
+  }, 80); // reduced from 300ms — snappier feel, less dead time
 }
 
 // ── FANFARE duration ──
@@ -1715,8 +2103,6 @@ const FANFARE_DURATION = 900;
 // ── Handle result ──
 function handleResult(r){
   setState({result:r});
-  const newHistory = [...state.history, r.winner==='draw'?'D':r.winner];
-  setState({history: newHistory});
 
   if(r.winner==='X'){
     const streak = state.winStreakX + 1;
@@ -1725,6 +2111,7 @@ function handleResult(r){
     if(isStreakWin) SFX.streakFanfare(); else SFX.fanfare();
     setTimeout(()=>setState({showCup:true}), 750);
     setTimeout(()=>launchVictoryCelebration(isStreakWin), FANFARE_DURATION);
+    setState({bubbleLockedUntil: Date.now() + 10000});
     setTimeout(()=>{
       let msg;
       if(streak === 3){
@@ -1736,7 +2123,7 @@ function handleResult(r){
           ? pickArr([`Well played, ${playerNames.X}!`, `${playerNames.X} wins it! Brilliant!`, `Bravo ${playerNames.X}! The grid is yours!`])
           : pick('winX');
       }
-      speak(msg);
+      speak(msg, true);
     }, FANFARE_DURATION+100);
 
     // Series check
@@ -1749,8 +2136,8 @@ function handleResult(r){
 
   } else if(r.winner==='O'){
     if(state.mode==='ai'){
-      setState({scores:{...state.scores, O_Hearty:state.scores.O_Hearty+1}, winStreakX:0, winStreakP2:0});
-      speak(pick('winO')); SFX.O();
+      setState({scores:{...state.scores, O_Hearty:state.scores.O_Hearty+1}, winStreakX:0, winStreakP2:0, bubbleLockedUntil: Date.now() + 10000});
+      speak(pick('winO'), true); SFX.O();
     } else {
       const streak = state.winStreakP2 + 1;
       setState({scores:{...state.scores, O_Human:state.scores.O_Human+1}, winStreakX:0, winStreakP2:streak});
@@ -1758,6 +2145,7 @@ function handleResult(r){
       if(isStreakWin) SFX.streakFanfare(); else SFX.fanfare();
       setTimeout(()=>setState({showCup:true}), 750);
       setTimeout(()=>launchVictoryCelebration(isStreakWin), FANFARE_DURATION);
+      setState({bubbleLockedUntil: Date.now() + 10000});
       setTimeout(()=>{
         let msg;
         if(streak === 3){
@@ -1771,7 +2159,7 @@ function handleResult(r){
           // Normal win message whether below or above streak threshold
           msg = pickArr([`Well played, ${playerNames.O}!`, `${playerNames.O} wins! Brilliant!`, `Bravo ${playerNames.O}! The grid is yours!`]);
         }
-        speak(msg);
+        speak(msg, true);
       }, FANFARE_DURATION+100);
 
       // Series check
@@ -1823,9 +2211,8 @@ function showMatchBanner(winner){
   document.getElementById('matchBanner').classList.remove('hidden');
   launchVictoryCelebration(true);
 }
-function closeMatchBanner(){ document.getElementById('matchBanner').classList.add('hidden'); }
 function startNewMatch(){
-  closeMatchBanner();
+  document.getElementById('matchBanner').classList.add('hidden');
   setState({seriesX:0, seriesO:0, seriesD:0});
   newGame();
 }
@@ -1950,7 +2337,8 @@ function newGame(){
   clearTimeout(aiTimeout); clearTimeout(watchTimeout);
   dom.cells.forEach(c=>{c.dataset.val='';});
   setState({board:Array(9).fill(null), xIsNext:true, result:null, aiThinking:false,
-    heartyAnim:'breathing', showCup:false, lastBubbleTime:Date.now(), undoStack:[]});
+    heartyAnim:'breathing', showCup:false, lastBubbleTime:Date.now(), undoStack:[],
+    bubbleLockedUntil:0});
   SFX.newGame();
   if(state.watchMode){
     speak("New round — AI vs AI! 🤖");
@@ -1969,7 +2357,8 @@ function switchMode(m){
   dom.cells.forEach(c=>{c.dataset.val='';});
   setState({mode:m, watchMode:false, board:Array(9).fill(null), xIsNext:true, result:null,
     aiThinking:false, heartyAnim:'breathing', showCup:false,
-    winStreakX:0, winStreakP2:0, undoStack:[], seriesX:0, seriesO:0, seriesD:0});
+    winStreakX:0, winStreakP2:0, undoStack:[], seriesX:0, seriesO:0, seriesD:0,
+    bubbleLockedUntil:0});
   SFX.newGame();
   if(m==='2p') showNameModal(false);
   else speak(pick('welcome'));
@@ -1983,6 +2372,76 @@ function setSeriesMode(m){
   speak(msgs[m]);
 }
 
+// ── THEME ENGINE ──────────────────────────────────────────────────────────
+// Palette definitions: id, display label, swatch gradient, dark-suitable flag
+var THEMES = [
+  { id: 'default',    label: '🩷 Hearty Pink',     swatch: 'linear-gradient(135deg,#f43f5e,#e879a0)', dark: false },
+  { id: 'spring',     label: '🌸 Pastel Spring',   swatch: 'linear-gradient(135deg,#22c55e,#a78bfa)', dark: false },
+  { id: 'ocean',      label: '🌊 Ocean Breeze',    swatch: 'linear-gradient(135deg,#0e7490,#22d3ee)', dark: false },
+  { id: 'summer',     label: '☀️ Golden Summer',   swatch: 'linear-gradient(135deg,#d97706,#fbbf24)', dark: false },
+  { id: 'neon',       label: '⚡ Neon Night',      swatch: 'linear-gradient(135deg,#ff00ff,#00ffff)', dark: true  },
+  { id: 'halloween',  label: '🎃 Spooky Halloween',swatch: 'linear-gradient(135deg,#7c2d12,#fb923c)', dark: true  }
+];
+
+var _currentTheme = 'default';
+
+function applyThemeLetterbox() {
+  // Find letterbox colour from the active theme's CSS variable
+  var isDark = document.body.classList.contains('dark-mode');
+  var lbMap = {
+    'default':   { light: '#ffeaf4', dark: '#1a0a12' },
+    'spring':    { light: '#f0faf4', dark: '#052e16' },
+    'neon':      { light: '#0d0221', dark: '#050010' },
+    'halloween': { light: '#1a0800', dark: '#0a0400' },
+    'ocean':     { light: '#e0f7fa', dark: '#042f40' },
+    'summer':    { light: '#fffbeb', dark: '#2d1a00' }
+  };
+  var pair = lbMap[_currentTheme] || lbMap['default'];
+  var col  = isDark ? pair.dark : pair.light;
+  document.documentElement.style.background = col;
+  document.body.style.background = col;
+}
+
+function setTheme(id) {
+  _currentTheme = id;
+  // Remove any previous theme attribute, then set new one
+  if (id === 'default') {
+    document.body.removeAttribute('data-theme');
+  } else {
+    document.body.setAttribute('data-theme', id);
+  }
+  applyThemeLetterbox();
+  // Refresh side menu swatches if open
+  if (menuOpen) renderSideMenu();
+  // Persist across page session (best-effort)
+  try { localStorage.setItem('hearty-theme', id); } catch(e){}
+}
+
+function menuSetTheme(id) {
+  setTheme(id);
+  // Re-render swatches inline without closing menu
+  renderThemeSwatches();
+}
+
+function renderThemeSwatches() {
+  var el = document.getElementById('menuThemeSwatches');
+  var lbl = document.getElementById('menuThemeLabel');
+  if (!el) return;
+  var currentTheme = THEMES.find(function(t){ return t.id === _currentTheme; }) || THEMES[0];
+  el.innerHTML = THEMES.map(function(t) {
+    var sel = t.id === _currentTheme ? ' selected' : '';
+    return '<button class="theme-swatch' + sel + '" '
+      + 'style="background:' + t.swatch + ';" '
+      + "onclick=\"menuSetTheme('" + t.id + "')\" "
+      + 'title="' + t.label + '">'
+      + '<span class="theme-swatch-tick">&#10003;</span>'
+      + '</button>';
+  }).join('');
+  if (lbl) lbl.textContent = currentTheme.label;
+}
+
+// ── END THEME ENGINE ──────────────────────────────────────────────────────
+
 // ── Sound / Dark ──
 function toggleSound(){
   _soundOn = !_soundOn;
@@ -1992,9 +2451,7 @@ function toggleDark(){
   var newDark = !state.darkMode;
   setState({darkMode: newDark});
   document.body.classList.toggle('dark-mode', newDark);
-  // Sync the letterbox background colour with the game theme
-  document.documentElement.style.background = newDark ? '#1a0a12' : '#ffeaf4';
-  document.body.style.background = newDark ? '#1a0a12' : '#ffeaf4';
+  applyThemeLetterbox();
 }
 
 // ── Name Modal ──
@@ -2026,6 +2483,10 @@ document.getElementById('nameModalOk').addEventListener('click', closeNameModal)
 function initLayout(){
   document.getElementById('root').innerHTML = `
 
+    <div class="game-title">
+      <span class="game-title-main">Hearty</span>
+      <span class="game-title-sub">Noughts &amp; Crosses</span>
+    </div>
     <div class="top-toolbar">
       <button class="icon-btn" id="soundBtn" onclick="toggleSound()" title="Toggle sound"></button>
       <button class="icon-btn" id="darkBtn"  onclick="toggleDark()"  title="Toggle dark mode"></button>
@@ -2104,9 +2565,21 @@ setInterval(()=>{
 }, 15000);
 
 // ── Boot ──
+// Restore saved theme before first render
+(function(){
+  try {
+    var saved = localStorage.getItem('hearty-theme');
+    if (saved && saved !== 'default') {
+      _currentTheme = saved;
+      document.body.setAttribute('data-theme', saved);
+    }
+  } catch(e){}
+})();
 initLayout();
 render();
-// Re-apply scale now that #root children exist (side menu elements were in DOM already)
+// Apply uniform scale so the 390×780 canvas fits any screen in both axes.
+// Math.min(vw/W, vh/H) picks the axis that is more constrained — the canvas
+// fills that axis fully and is centred (letterboxed) on the other.
 (function() {
   var DESIGN_W = 390, DESIGN_H = 780;
   function applyScale() {
@@ -2119,9 +2592,10 @@ render();
       root.style.transform = 'scale(' + scale + ')';
       root.style.transformOrigin = 'top left';
       root.style.left = Math.round((vw - DESIGN_W * scale) / 2) + 'px';
-      root.style.top  = Math.round((vh - DESIGN_H * scale) / 2) + 'px';
+      root.style.top  = '0px';
     }
-    // Menu is position:fixed in real viewport — no scaling needed
+    // Keep letterbox colour in sync with current theme + palette
+    if (typeof applyThemeLetterbox === 'function') applyThemeLetterbox();
   }
   applyScale();
   window.addEventListener('resize', applyScale);
