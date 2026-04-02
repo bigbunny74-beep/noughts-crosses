@@ -1,0 +1,206 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='390' height='340' viewBox='0 0 390 340'>
+  <rect width='390' height='340' fill='#fffbeb'/>
+
+  <!-- GHOST ZONE y0-110 -->
+
+  <!-- Small sun top-left -->
+  <g transform='translate(22,18)' opacity='0.32'>
+    <circle cx='0' cy='0' r='6' fill='none' stroke='rgba(245,158,11,0.60)' stroke-width='1.8'/>
+    <g stroke='rgba(245,158,11,0.50)' stroke-width='1.4' stroke-linecap='round'>
+      <line x1='0' y1='-9' x2='0' y2='-13'/><line x1='0' y1='9' x2='0' y2='13'/>
+      <line x1='-9' y1='0' x2='-13' y2='0'/><line x1='9' y1='0' x2='13' y2='0'/>
+      <line x1='-6' y1='-6' x2='-9' y2='-9'/><line x1='6' y1='-6' x2='9' y2='-9'/>
+      <line x1='-6' y1='6' x2='-9' y2='9'/><line x1='6' y1='6' x2='9' y2='9'/>
+    </g>
+  </g>
+
+  <!-- X amber -->
+  <g transform='translate(68,8) rotate(20)' fill='none' stroke='rgba(180,83,9,0.30)' stroke-width='1.8' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='9' y2='9'/><line x1='9' y1='0' x2='0' y2='9'/>
+  </g>
+
+  <!-- Ice cream cone top-right -->
+  <g transform='translate(356,18)' opacity='0.32'>
+    <path d='M-8,4 L0,20 L8,4 Z' fill='none' stroke='rgba(194,65,12,0.50)' stroke-width='1.6' stroke-linejoin='round'/>
+    <path d='M-8,4 Q-8,-8 0,-10 Q8,-8 8,4 Z' fill='none' stroke='rgba(245,158,11,0.55)' stroke-width='1.6'/>
+    <!-- Scoop lines -->
+    <path d='M-4,-2 Q0,-6 4,-2' fill='none' stroke='rgba(251,146,60,0.40)' stroke-width='1'/>
+  </g>
+
+  <!-- X amber right -->
+  <g transform='translate(316,6) rotate(-16)' fill='none' stroke='rgba(180,83,9,0.28)' stroke-width='1.8' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='9' y2='9'/><line x1='9' y1='0' x2='0' y2='9'/>
+  </g>
+
+  <!-- Sunflower left -->
+  <g transform='translate(14,56)' opacity='0.30'>
+    <circle cx='0' cy='0' r='4' fill='rgba(120,60,0,0.5)'/>
+    <g stroke='rgba(245,158,11,0.55)' stroke-width='1.4' fill='none'>
+      <ellipse cx='0' cy='-9' rx='3' ry='5'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(45)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(90)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(135)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(180)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(225)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(270)'/>
+      <ellipse cx='0' cy='-9' rx='3' ry='5' transform='rotate(315)'/>
+    </g>
+    <line x1='0' y1='4' x2='0' y2='16' stroke='rgba(34,197,94,0.45)' stroke-width='1.5'/>
+  </g>
+
+  <!-- Lemon / O shape right -->
+  <g transform='translate(372,56)' opacity='0.30'>
+    <ellipse cx='0' cy='0' rx='9' ry='11' fill='none' stroke='rgba(245,158,11,0.55)' stroke-width='2'/>
+    <line x1='0' y1='-11' x2='0' y2='-15' stroke='rgba(34,197,94,0.45)' stroke-width='1.5'/>
+    <line x1='-4' y1='-4' x2='4' y2='4' stroke='rgba(245,158,11,0.30)' stroke-width='0.8'/>
+    <line x1='4' y1='-4' x2='-4' y2='4' stroke='rgba(245,158,11,0.30)' stroke-width='0.8'/>
+  </g>
+
+  <!-- X small -->
+  <g transform='translate(104,38) rotate(-8)' fill='none' stroke='rgba(180,83,9,0.22)' stroke-width='1.6' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='8' y2='8'/><line x1='8' y1='0' x2='0' y2='8'/>
+  </g>
+
+  <!-- Flamingo body (simplified) -->
+  <g transform='translate(280,46)' opacity='0.28'>
+    <path d='M0,-8 C4,-8 6,-4 4,0 C2,4 0,6 2,10' fill='none' stroke='rgba(251,113,133,0.55)' stroke-width='1.8' stroke-linecap='round'/>
+    <circle cx='0' cy='-10' r='3' fill='none' stroke='rgba(251,113,133,0.55)' stroke-width='1.5'/>
+    <path d='M-4,10 L2,10 L4,14' fill='none' stroke='rgba(251,113,133,0.50)' stroke-width='1.4' stroke-linecap='round'/>
+  </g>
+
+  <!-- Sun medium left -->
+  <g transform='translate(32,92)' opacity='0.28'>
+    <circle cx='0' cy='0' r='8' fill='none' stroke='rgba(245,158,11,0.55)' stroke-width='2'/>
+    <g stroke='rgba(245,158,11,0.45)' stroke-width='1.4' stroke-linecap='round'>
+      <line x1='0' y1='-11' x2='0' y2='-16'/><line x1='0' y1='11' x2='0' y2='16'/>
+      <line x1='-11' y1='0' x2='-16' y2='0'/><line x1='11' y1='0' x2='16' y2='0'/>
+      <line x1='-8' y1='-8' x2='-11' y2='-11'/><line x1='8' y1='-8' x2='11' y2='-11'/>
+      <line x1='-8' y1='8' x2='-11' y2='11'/><line x1='8' y1='8' x2='11' y2='11'/>
+    </g>
+  </g>
+
+  <!-- X right top -->
+  <g transform='translate(348,86) rotate(-20)' fill='none' stroke='rgba(180,83,9,0.28)' stroke-width='2' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='11' y2='11'/><line x1='11' y1='0' x2='0' y2='11'/>
+  </g>
+
+  <!-- ACTIVE ZONE y110-280 -->
+
+  <!-- Big X amber -->
+  <g transform='translate(8,118) rotate(-18)' fill='none' stroke='rgba(180,83,9,0.40)' stroke-width='3' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='24' y2='24'/><line x1='24' y1='0' x2='0' y2='24'/>
+  </g>
+
+  <!-- Large sunflower right -->
+  <g transform='translate(374,136)' opacity='0.36'>
+    <circle cx='0' cy='0' r='8' fill='rgba(120,60,0,0.45)'/>
+    <g stroke='rgba(245,158,11,0.58)' stroke-width='2' fill='none'>
+      <ellipse cx='0' cy='-15' rx='5' ry='8'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(45)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(90)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(135)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(180)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(225)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(270)'/>
+      <ellipse cx='0' cy='-15' rx='5' ry='8' transform='rotate(315)'/>
+    </g>
+    <line x1='0' y1='8' x2='0' y2='24' stroke='rgba(34,197,94,0.5)' stroke-width='2'/>
+  </g>
+
+  <!-- Large ice cream left -->
+  <g transform='translate(46,158)' opacity='0.32'>
+    <path d='M-10,5 L0,26 L10,5 Z' fill='none' stroke='rgba(194,65,12,0.52)' stroke-width='2' stroke-linejoin='round'/>
+    <path d='M-10,5 Q-10,-14 0,-16 Q10,-14 10,5 Z' fill='none' stroke='rgba(245,158,11,0.58)' stroke-width='2'/>
+    <path d='M-5,0 Q0,-6 5,0' fill='none' stroke='rgba(251,146,60,0.40)' stroke-width='1.2'/>
+    <circle cx='0' cy='-16' r='2' fill='rgba(239,68,68,0.5)'/>
+  </g>
+
+  <!-- X right mid -->
+  <g transform='translate(330,148) rotate(18)' fill='none' stroke='rgba(180,83,9,0.36)' stroke-width='2.4' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='16' y2='16'/><line x1='16' y1='0' x2='0' y2='16'/>
+  </g>
+
+  <!-- Sun small left mid -->
+  <g transform='translate(88,130)' opacity='0.30'>
+    <circle cx='0' cy='0' r='6' fill='none' stroke='rgba(245,158,11,0.55)' stroke-width='1.6'/>
+    <g stroke='rgba(245,158,11,0.40)' stroke-width='1.2' stroke-linecap='round'>
+      <line x1='0' y1='-9' x2='0' y2='-12'/><line x1='0' y1='9' x2='0' y2='12'/>
+      <line x1='-9' y1='0' x2='-12' y2='0'/><line x1='9' y1='0' x2='12' y2='0'/>
+      <line x1='-6' y1='-6' x2='-8' y2='-8'/><line x1='6' y1='-6' x2='8' y2='-8'/>
+    </g>
+  </g>
+
+  <!-- Flamingo right mid -->
+  <g transform='translate(292,126)' opacity='0.28'>
+    <path d='M0,-12 C6,-12 9,-6 6,0 C3,6 0,9 3,15' fill='none' stroke='rgba(251,113,133,0.55)' stroke-width='2' stroke-linecap='round'/>
+    <circle cx='0' cy='-15' r='4' fill='none' stroke='rgba(251,113,133,0.55)' stroke-width='1.8'/>
+    <path d='M-5,15 L3,15 L5,21' fill='none' stroke='rgba(251,113,133,0.50)' stroke-width='1.6' stroke-linecap='round'/>
+    <path d='M3,15 L6,19' fill='none' stroke='rgba(251,113,133,0.50)' stroke-width='1.4' stroke-linecap='round'/>
+  </g>
+
+  <!-- X left lower -->
+  <g transform='translate(112,138) rotate(22)' fill='none' stroke='rgba(180,83,9,0.28)' stroke-width='1.8' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='9' y2='9'/><line x1='9' y1='0' x2='0' y2='9'/>
+  </g>
+
+  <!-- Big X left lower -->
+  <g transform='translate(4,196) rotate(14)' fill='none' stroke='rgba(180,83,9,0.38)' stroke-width='2.8' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='22' y2='22'/><line x1='22' y1='0' x2='0' y2='22'/>
+  </g>
+
+  <!-- Large sun right lower -->
+  <g transform='translate(370,214)' opacity='0.34'>
+    <circle cx='0' cy='0' r='13' fill='none' stroke='rgba(245,158,11,0.55)' stroke-width='2.5'/>
+    <g stroke='rgba(245,158,11,0.42)' stroke-width='1.8' stroke-linecap='round'>
+      <line x1='0' y1='-16' x2='0' y2='-22'/><line x1='0' y1='16' x2='0' y2='22'/>
+      <line x1='-16' y1='0' x2='-22' y2='0'/><line x1='16' y1='0' x2='22' y2='0'/>
+      <line x1='-11' y1='-11' x2='-15' y2='-15'/><line x1='11' y1='-11' x2='15' y2='-15'/>
+      <line x1='-11' y1='11' x2='-15' y2='15'/><line x1='11' y1='11' x2='15' y2='15'/>
+    </g>
+  </g>
+
+  <!-- Ice cream small left -->
+  <g transform='translate(54,228)' opacity='0.28'>
+    <path d='M-7,4 L0,18 L7,4 Z' fill='none' stroke='rgba(194,65,12,0.48)' stroke-width='1.8' stroke-linejoin='round'/>
+    <path d='M-7,4 Q-7,-9 0,-11 Q7,-9 7,4 Z' fill='none' stroke='rgba(245,158,11,0.52)' stroke-width='1.8'/>
+  </g>
+
+  <!-- Sunflower mid right -->
+  <g transform='translate(328,234)' opacity='0.26'>
+    <circle cx='0' cy='0' r='5' fill='rgba(120,60,0,0.40)'/>
+    <g stroke='rgba(245,158,11,0.48)' stroke-width='1.5' fill='none'>
+      <ellipse cx='0' cy='-10' rx='3' ry='6'/>
+      <ellipse cx='0' cy='-10' rx='3' ry='6' transform='rotate(60)'/>
+      <ellipse cx='0' cy='-10' rx='3' ry='6' transform='rotate(120)'/>
+      <ellipse cx='0' cy='-10' rx='3' ry='6' transform='rotate(180)'/>
+      <ellipse cx='0' cy='-10' rx='3' ry='6' transform='rotate(240)'/>
+      <ellipse cx='0' cy='-10' rx='3' ry='6' transform='rotate(300)'/>
+    </g>
+  </g>
+
+  <!-- Lemon left lower -->
+  <g transform='translate(22,256)' opacity='0.26'>
+    <ellipse cx='0' cy='0' rx='7' ry='8' fill='none' stroke='rgba(245,158,11,0.48)' stroke-width='1.8'/>
+    <line x1='0' y1='-8' x2='0' y2='-12' stroke='rgba(34,197,94,0.42)' stroke-width='1.4'/>
+  </g>
+
+  <!-- X right lower -->
+  <g transform='translate(356,262) rotate(-10)' fill='none' stroke='rgba(180,83,9,0.28)' stroke-width='2' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='12' y2='12'/><line x1='12' y1='0' x2='0' y2='12'/>
+  </g>
+
+  <!-- CARD ZONE — fade -->
+  <g transform='translate(30,296)' opacity='0.16'>
+    <circle cx='0' cy='0' r='8' fill='none' stroke='rgba(245,158,11,0.38)' stroke-width='1.8'/>
+    <g stroke='rgba(245,158,11,0.28)' stroke-width='1.2' stroke-linecap='round'>
+      <line x1='0' y1='-11' x2='0' y2='-14'/><line x1='0' y1='11' x2='0' y2='14'/>
+      <line x1='-11' y1='0' x2='-14' y2='0'/><line x1='11' y1='0' x2='14' y2='0'/>
+    </g>
+  </g>
+  <g transform='translate(78,304) rotate(24)' fill='none' stroke='rgba(180,83,9,0.16)' stroke-width='1.8' stroke-linecap='round'>
+    <line x1='0' y1='0' x2='12' y2='12'/><line x1='12' y1='0' x2='0' y2='12'/>
+  </g>
+  <g transform='translate(362,308)' opacity='0.12'>
+    <path d='M-5,4 L0,18 L5,4 Z' fill='none' stroke='rgba(194,65,12,0.30)' stroke-width='1.4' stroke-linejoin='round'/>
+  </g>
+</svg>
