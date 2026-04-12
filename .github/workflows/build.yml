@@ -30,22 +30,27 @@ jobs:
 
       - name: Bundle external assets
         run: |
-          mkdir -p assets/fonts assets/bg
+          # 1. Determine the web directory (usually 'www', 'dist', or '.')
+          # We look for index.html to find where the web assets live.
+          WEB_DIR=$(find . -maxdepth 2 -name "index.html" -exec dirname {} \;)
+          echo "Web directory detected as: $WEB_DIR"
+          
+          mkdir -p "$WEB_DIR/assets/fonts" "$WEB_DIR/assets/bg"
 
-          # 1. Handle Fonts
+          # 2. Handle Fonts
           FONT_URL="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Lilita+One&display=swap"
-          curl -sfA "Mozilla/5.0 (X11; Linux x86_64)" "$FONT_URL" -o assets/fonts/fonts.css || echo "Font CSS download failed"
+          curl -sfA "Mozilla/5.0 (X11; Linux x86_64)" "$FONT_URL" -o "$WEB_DIR/assets/fonts/fonts.css" || echo "Font CSS download failed"
 
-          grep -oP 'https://[^)]+\.woff2' assets/fonts/fonts.css | sort -u | while read url; do
+          grep -oP 'https://[^)]+\.woff2' "$WEB_DIR/assets/fonts/fonts.css" | sort -u | while read url; do
             fname=$(echo "$url" | md5sum | cut -c1-12).woff2
-            curl -sfL "$url" -o "assets/fonts/$fname"
-            sed -i "s|$url|../fonts/$fname|g" assets/fonts/fonts.css
+            curl -sfL "$url" -o "$WEB_DIR/assets/fonts/$fname"
+            sed -i "s|$url|../fonts/$fname|g" "$WEB_DIR/assets/fonts/fonts.css"
           done
           
-          # Replace Google Font import with local CSS
-          sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" index.html
+          # Replace Google Font import with local CSS in index.html
+          sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" "$WEB_DIR/index.html"
 
-          # 2. Handle SVGs
+          # 3. Handle SVGs
           SVG_URLS=(
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
@@ -55,8 +60,9 @@ jobs:
 
           for url in "${SVG_URLS[@]}"; do
             fname=$(basename "$url")
-            if curl -sfL "$url" -o "assets/bg/$fname"; then
-              sed -i "s|$url|./assets/bg/$fname|g" index.html
+            if curl -sfL "$url" -o "$WEB_DIR/assets/bg/$fname"; then
+              # Replace the remote URL with the local relative path in index.html
+              sed -i "s|$url|./assets/bg/$fname|g" "$WEB_DIR/index.html"
             else
               echo "Failed to download $url"
             fi
