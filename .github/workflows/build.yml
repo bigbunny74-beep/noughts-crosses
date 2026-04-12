@@ -80,7 +80,6 @@ jobs:
       - name: Fix SDK versions and App Name
         run: |
           # 1. Update SDK versions in variables.gradle to stop the 'old android' warning
-          # Target SDK 34 is required for modern Android versions
           SEDCONFIG="android/variables.gradle"
           if [ -f "$SEDCONFIG" ]; then
             sed -i "s/compileSdkVersion = .*/compileSdkVersion = 34/g" "$SEDCONFIG"
@@ -88,9 +87,8 @@ jobs:
             echo "Updated $SEDCONFIG to Target SDK 34"
           fi
 
-          # 2. Set the friendly app name
-          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' \
-            android/app/src/main/res/values/strings.xml
+          # 2. Set the friendly app name (Quoted to prevent YAML syntax errors with '&')
+          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' android/app/src/main/res/values/strings.xml
 
       - name: Copy web assets
         run: npx cap copy android
@@ -110,7 +108,7 @@ jobs:
           if [ -f "icon.png" ]; then
             echo "Processing icon.png for Adaptive and Legacy formats..."
             
-            # Create a solid background color (White)
+            # Create a solid background color (Updated to #F7B9C9)
             echo '<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#F7B9C9</color></resources>' > android/app/src/main/res/values/ic_background_color.xml
 
             # Create Adaptive XML definition
