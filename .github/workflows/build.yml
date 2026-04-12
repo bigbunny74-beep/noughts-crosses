@@ -23,26 +23,94 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install image & font tools
+        run: |
+          sudo apt-get install -y imagemagick python3-pip
+          pip3 install requests --break-system-packages
+
+      # ── 1. BUNDLE EXTERNAL ASSETS INTO THE HTML ──────────────────────────────
+      # The game references Google Fonts and background SVGs from raw.githubusercontent.com.
+      # We download every external asset and embed or localise them so the APK
+      # works 100% offline with no network calls at runtime.
+      - name: Bundle external assets (fonts + SVG backgrounds)
+        run: |
+          mkdir -p assets/fonts assets/bg
+
+          # ── Google Fonts: download the CSS, then fetch every font file it lists ──
+          FONT_URL="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Lilita+One&display=swap"
+          # Fetch with a desktop UA so Google returns woff2 URLs
+          curl -sA "Mozilla/5.0 (X11; Linux x86_64)" "$FONT_URL" -o assets/fonts/fonts.css
+
+          # Extract all woff2 URLs from the CSS and download each one
+          grep -oP 'https://[^)]+\.woff2' assets/fonts/fonts.css | sort -u | while read url; do
+            fname=$(echo "$url" | md5sum | cut -c1-12).woff2
+            curl -sL "$url" -o "assets/fonts/$fname"
+            # Rewrite the CSS to use the local path
+            sed -i "s|$url|../fonts/$fname|g" assets/fonts/fonts.css
+          done
+
+          # Rewrite the @import in index.html to point at the local CSS
+          sed -i "s|@import url('https://fonts.googleapis.com/[^']*')|@import url('./assets/fonts/fonts.css')|g" index.html
+
+          # ── Theme background SVGs from raw.githubusercontent.com ──
+          SVG_URLS=(
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-spring.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-spring-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-neon.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-neon-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-halloween.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-halloween-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-ocean.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-ocean-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-summer.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-summer-dark.svg"
+          )
+
+          for url in "${SVG_URLS[@]}"; do
+            fname=$(basename "$url")
+            curl -sL "$url" -o "assets/bg/$fname"
+            # Rewrite every occurrence of the full URL in index.html to the local path
+            sed -i "s|$url|./assets/bg/$fname|g" index.html
+          done
+
+          echo "Asset bundling complete — verifying no external URLs remain:"
+          grep -c "raw.githubusercontent.com\|fonts.googleapis.com" index.html && echo "WARNING: some URLs remain" || echo "All external URLs replaced"
+
       - name: Add Android platform
         run: npx cap add android
+
+      # ── 2. SET APP NAME ───────────────────────────────────────────────────────
+      - name: Set app name to Hearty Noughts & Crosses
+        run: |
+          # Update the display label in strings.xml (shown on the home screen)
+          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' \
+            android/app/src/main/res/values/strings.xml
+
+          # Update capacitor.config.json / capacitor.config.ts if present
+          if [ -f capacitor.config.json ]; then
+            node -e "
+              const fs = require('fs');
+              const cfg = JSON.parse(fs.readFileSync('capacitor.config.json','utf8'));
+              cfg.appName = 'Hearty Noughts & Crosses';
+              fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));
+            "
+          fi
 
       - name: Copy web assets
         run: npx cap copy android
 
-      - name: Install image tools
-        run: sudo apt-get install -y imagemagick
-
-      - name: Process Custom Assets
+      # ── 3. PROCESS ICON & SPLASH ──────────────────────────────────────────────
+      - name: Process custom icon and splash screen
         run: |
-          # Ensure directories exist
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          # Ensure all mipmap/drawable directories exist
+          for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            mkdir -p android/app/src/main/res/$dir
+          done
           mkdir -p android/app/src/main/res/drawable
 
-          # Process Icon (expects icon.png in root)
+          # ── App icon (icon.png must be in repo root) ──
           if [ -f "icon.png" ]; then
             echo "Processing icon.png..."
             convert icon.png -resize 48x48   android/app/src/main/res/mipmap-mdpi/ic_launcher.png
@@ -50,16 +118,29 @@ jobs:
             convert icon.png -resize 96x96   android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
             convert icon.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
             convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            # Also generate a round variant from the same source
+            for size in 48 72 96 144 192; do
+              dir=""
+              case $size in
+                48)  dir=mipmap-mdpi ;;
+                72)  dir=mipmap-hdpi ;;
+                96)  dir=mipmap-xhdpi ;;
+                144) dir=mipmap-xxhdpi ;;
+                192) dir=mipmap-xxxhdpi ;;
+              esac
+              cp android/app/src/main/res/$dir/ic_launcher.png \
+                 android/app/src/main/res/$dir/ic_launcher_round.png
+            done
           else
-            echo "Warning: icon.png not found in root. Using default Capacitor icons."
+            echo "WARNING: icon.png not found — using default Capacitor icon"
           fi
 
-          # Process Splash (expects splash.png in root)
+          # ── Splash screen (splash.png must be in repo root) ──
           if [ -f "splash.png" ]; then
             echo "Processing splash.png..."
             convert splash.png -resize 2732x2732 android/app/src/main/res/drawable/splash.png
           else
-            echo "Warning: splash.png not found in root. Using default Capacitor splash."
+            echo "WARNING: splash.png not found — using default Capacitor splash"
           fi
 
       - name: Make Gradle executable
@@ -71,6 +152,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NoughtsAndCrosses
+          name: HeartyNoughtsAndCrosses
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
