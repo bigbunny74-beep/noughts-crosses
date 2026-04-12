@@ -30,10 +30,9 @@ jobs:
 
       - name: Bundle external assets
         run: |
-          # 1. Determine the web directory (usually 'www', 'dist', or '.')
-          # We look for index.html to find where the web assets live.
-          WEB_DIR=$(find . -maxdepth 2 -name "index.html" -exec dirname {} \;)
-          echo "Web directory detected as: $WEB_DIR"
+          # 1. Determine the web directory (Confirmed as 'www' from file structure)
+          WEB_DIR="www"
+          echo "Web directory set to: $WEB_DIR"
           
           mkdir -p "$WEB_DIR/assets/fonts" "$WEB_DIR/assets/bg"
 
@@ -50,12 +49,20 @@ jobs:
           # Replace Google Font import with local CSS in index.html
           sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" "$WEB_DIR/index.html"
 
-          # 3. Handle SVGs
+          # 3. Handle SVGs (Including all themes)
           SVG_URLS=(
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-spring.svg"
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-spring-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-neon.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-neon-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-halloween.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-halloween-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-ocean.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-ocean-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-summer.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-summer-dark.svg"
           )
 
           for url in "${SVG_URLS[@]}"; do
