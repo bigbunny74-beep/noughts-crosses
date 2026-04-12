@@ -79,16 +79,16 @@ jobs:
 
       - name: Fix SDK versions and App Name
         run: |
-          # 1. Update SDK versions in variables.gradle to stop the 'old android' warning
+          # 1. Update SDK versions in variables.gradle
           SEDCONFIG="android/variables.gradle"
           if [ -f "$SEDCONFIG" ]; then
             sed -i "s/compileSdkVersion = .*/compileSdkVersion = 34/g" "$SEDCONFIG"
             sed -i "s/targetSdkVersion = .*/targetSdkVersion = 34/g" "$SEDCONFIG"
-            echo "Updated $SEDCONFIG to Target SDK 34"
           fi
 
-          # 2. Set the friendly app name (Using double quotes to escape ampersand properly in shell)
-          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' android/app/src/main/res/values/strings.xml
+          # 2. Set the friendly app name
+          STRINGS="android/app/src/main/res/values/strings.xml"
+          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' "$STRINGS"
 
       - name: Copy web assets
         run: npx cap copy android
@@ -101,38 +101,28 @@ jobs:
           mkdir -p android/app/src/main/res/drawable
           
           for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
-            mkdir -p android/app/src/main/res/$dir
+            mkdir -p "android/app/src/main/res/$dir"
           done
 
           # 2. Icon processing
           if [ -f "icon.png" ]; then
-            echo "Processing icon.png for Adaptive, Legacy, and Monochrome formats..."
-            
-            # Create a solid background color (#F7B9C9)
+            # Background Color
             echo '<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#F7B9C9</color></resources>' > android/app/src/main/res/values/ic_background_color.xml
 
-            # Generate Monochrome version (Grayscale for Themed Icons)
+            # Monochrome Layer
             convert icon.png -colorspace gray android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png
 
-            # Create Adaptive XML definition with Monochrome support (Android 13+)
-            cat <<EOF > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background"/>
-    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
-    <monochrome android:drawable="@mipmap/ic_launcher_monochrome"/>
-</adaptive-icon>
-EOF
+            # Adaptive XML
+            printf '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@color/ic_launcher_background"/>\n    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n    <monochrome android:drawable="@mipmap/ic_launcher_monochrome"/>\n</adaptive-icon>' > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
             cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
 
-            # Generate Foreground Layers
+            # Foreground & Legacy PNGs
             convert icon.png -resize 432x432 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
             convert icon.png -resize 324x324 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
             convert icon.png -resize 216x216 android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
             convert icon.png -resize 162x162 android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
             convert icon.png -resize 108x108 android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
 
-            # Generate Legacy PNGs
             convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
             convert icon.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
             convert icon.png -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
@@ -140,20 +130,18 @@ EOF
             convert icon.png -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
             
             for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-              cp android/app/src/main/res/mipmap-$d/ic_launcher.png android/app/src/main/res/mipmap-$d/ic_launcher_round.png
+              cp "android/app/src/main/res/mipmap-$d/ic_launcher.png" "android/app/src/main/res/mipmap-$d/ic_launcher_round.png"
             done
           fi
 
           # 3. Splash processing
           if [ -f "splash.png" ]; then
             convert splash.png -resize 2732x2732 android/app/src/main/res/drawable/splash.png
-            # Populate density folders to prevent Capacitor from falling back to default branding
             mkdir -p android/app/src/main/res/drawable-port-xxhdpi
             mkdir -p android/app/src/main/res/drawable-land-xxhdpi
             cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-port-xxhdpi/splash.png
             cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-land-xxhdpi/splash.png
           else
-            echo "CRITICAL: splash.png not found. Failing build."
             exit 1
           fi
 
