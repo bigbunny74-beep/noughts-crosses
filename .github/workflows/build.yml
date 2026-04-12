@@ -86,7 +86,10 @@ jobs:
             sed -i "s/targetSdkVersion = .*/targetSdkVersion = 34/g" "$SEDCONFIG"
           fi
 
-          # 2. Set the friendly app name
+          # 2. Suppress the compileSdk warning in gradle.properties
+          echo "android.suppressUnsupportedCompileSdk=34" >> android/gradle.properties
+
+          # 3. Set the friendly app name
           STRINGS="android/app/src/main/res/values/strings.xml"
           sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' "$STRINGS"
 
@@ -106,8 +109,8 @@ jobs:
 
           # 2. Icon processing
           if [ -f "icon.png" ]; then
-            # Background Color
-            echo '<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#F7B9C9</color></resources>' > android/app/src/main/res/values/ic_background_color.xml
+            # FIX: Overwrite the existing default color file to avoid "Duplicate resources" error
+            echo '<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#F7B9C9</color></resources>' > android/app/src/main/res/values/ic_launcher_background.xml
 
             # Monochrome Layer
             convert icon.png -colorspace gray android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png
