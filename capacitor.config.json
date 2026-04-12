@@ -1,6 +1,6 @@
 {
   "appId": "com.retrogamingslugs.noughtscrosses",
-  "appName": "Noughts & Crosses",
+  "appName": "Hearty Noughts & Crosses",
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
