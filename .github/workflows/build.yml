@@ -30,7 +30,7 @@ jobs:
 
       - name: Bundle external assets
         run: |
-          # 1. Determine the web directory (Confirmed as 'www' from file structure)
+          # 1. Target the 'www' directory found in your capacitor.config.json
           WEB_DIR="www"
           echo "Web directory set to: $WEB_DIR"
           
@@ -49,7 +49,7 @@ jobs:
           # Replace Google Font import with local CSS in index.html
           sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" "$WEB_DIR/index.html"
 
-          # 3. Handle SVGs (Including all themes)
+          # 3. Handle SVGs (Correcting the 'assests' typo in the URL match)
           SVG_URLS=(
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
             "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
@@ -68,7 +68,7 @@ jobs:
           for url in "${SVG_URLS[@]}"; do
             fname=$(basename "$url")
             if curl -sfL "$url" -o "$WEB_DIR/assets/bg/$fname"; then
-              # Replace the remote URL with the local relative path in index.html
+              # Replace the remote URL (with typo) with local path in index.html
               sed -i "s|$url|./assets/bg/$fname|g" "$WEB_DIR/index.html"
             else
               echo "Failed to download $url"
@@ -88,33 +88,38 @@ jobs:
 
       - name: Process custom icon and splash
         run: |
-          # Create all density directories
+          # Create density directories
           for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
             mkdir -p android/app/src/main/res/$dir
           done
           mkdir -p android/app/src/main/res/drawable
 
-          # Icon processing
+          # Icon processing (Root level check)
           if [ -f "icon.png" ]; then
-            convert icon.png -resize 48x48   android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-            convert icon.png -resize 72x72   android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-            convert icon.png -resize 96x96   android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-            convert icon.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
             convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-            for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
-              cp android/app/src/main/res/$dir/ic_launcher.png android/app/src/main/res/$dir/ic_launcher_round.png
+            # ... shorthand for others
+            for size in 48 72 96 144; do
+              case $size in
+                48) d=mdpi ;; 72) d=hdpi ;; 96) d=xhdpi ;; 144) d=xxhdpi ;;
+              esac
+              convert icon.png -resize ${size}x${size} android/app/src/main/res/mipmap-$d/ic_launcher.png
+              cp android/app/src/main/res/mipmap-$d/ic_launcher.png android/app/src/main/res/mipmap-$d/ic_launcher_round.png
             done
+            cp android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
           fi
 
-          # Splash processing
+          # Splash processing (Addressing the fallback issue)
           if [ -f "splash.png" ]; then
             echo "Processing splash.png..."
+            # Base splash
             convert splash.png -resize 2732x2732 android/app/src/main/res/drawable/splash.png
-            # Target density folders for better Android compatibility
+            # Mandatory density folders for Capacitor Splash Screen plugin to override fallback
             mkdir -p android/app/src/main/res/drawable-port-xxhdpi
+            mkdir -p android/app/src/main/res/drawable-land-xxhdpi
             cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-port-xxhdpi/splash.png
+            cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-land-xxhdpi/splash.png
           else
-            echo "CRITICAL: splash.png not found. Build will fail for safety."
+            echo "CRITICAL: splash.png not found. Failing build."
             exit 1
           fi
 
