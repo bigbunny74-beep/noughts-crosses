@@ -1,111 +1,117 @@
 name: Build APK (Fixed Assets)
 
 on:
-push:
-branches: [main]
-workflow_dispatch:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-build:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  - uses: actions/setup-java@v4
-    with:
-      distribution: zulu
-      java-version: '17'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
 
-  - uses: actions/setup-node@v4
-    with:
-      node-version: '20'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-  - name: Install dependencies
-    run: npm install
+      - name: Install dependencies
+        run: npm install
 
-  - name: Install image & font tools
-    run: |
-      sudo apt-get install -y imagemagick python3-pip
-      pip3 install requests --break-system-packages
+      - name: Install image & font tools
+        run: |
+          sudo apt-get install -y imagemagick python3-pip
+          pip3 install requests --break-system-packages
 
-  - name: Bundle external assets
-    run: |
-      mkdir -p assets/fonts assets/bg
+      - name: Bundle external assets
+        run: |
+          mkdir -p assets/fonts assets/bg
 
-      # 1. Handle Fonts
-      FONT_URL="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Lilita+One&display=swap"
-      curl -sfA "Mozilla/5.0 (X11; Linux x86_64)" "$FONT_URL" -o assets/fonts/fonts.css || echo "Font CSS download failed"
+          # 1. Handle Fonts
+          FONT_URL="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Lilita+One&display=swap"
+          curl -sfA "Mozilla/5.0 (X11; Linux x86_64)" "$FONT_URL" -o assets/fonts/fonts.css || echo "Font CSS download failed"
 
-      grep -oP 'https://[^)]+\.woff2' assets/fonts/fonts.css | sort -u | while read url; do
-        fname=$(echo "$url" | md5sum | cut -c1-12).woff2
-        curl -sfL "$url" -o "assets/fonts/$fname"
-        sed -i "s|$url|../fonts/$fname|g" assets/fonts/fonts.css
-      done
-      # Use a more flexible sed pattern for the CSS import
-      sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" index.html
+          grep -oP 'https://[^)]+\.woff2' assets/fonts/fonts.css | sort -u | while read url; do
+            fname=$(echo "$url" | md5sum | cut -c1-12).woff2
+            curl -sfL "$url" -o "assets/fonts/$fname"
+            sed -i "s|$url|../fonts/$fname|g" assets/fonts/fonts.css
+          done
+          
+          # Replace Google Font import with local CSS
+          sed -i "s|@import url(['\"]https://fonts.googleapis.com/[^'\"]*['\"])|@import url('./assets/fonts/fonts.css')|g" index.html
 
-      # 2. Handle SVGs (Fixed the 'assests' typo in the URL matching)
-      # We define the URLs. Note: I am using the ones from your script, but ensure these files actually exist!
-      SVG_URLS=(
-        "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
-        "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
-        "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-spring.svg"
-        "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-spring-dark.svg"
-      )
+          # 2. Handle SVGs
+          SVG_URLS=(
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-default.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-default-dark.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/3095bc0db01eab570b679e338f7367e036abd388/assests/hearty-bg-spring.svg"
+            "https://raw.githubusercontent.com/bigbunny74-beep/noughts-crosses/a9dedc52ba38154a32fec813495a90cff93f172a/assests/hearty-bg-spring-dark.svg"
+          )
 
-      for url in "${SVG_URLS[@]}"; do
-        fname=$(basename "$url")
-        # The -f flag in curl makes it fail on 404
-        if curl -sfL "$url" -o "assets/bg/$fname"; then
-          # Crucially: we replace the URL in index.html REGARDLESS of whether the HTML 
-          # uses the 'assests' typo or correct 'assets' spelling by matching the URL string
-          sed -i "s|$url|./assets/bg/$fname|g" index.html
-        else
-          echo "Failed to download $url"
-        fi
-      done
+          for url in "${SVG_URLS[@]}"; do
+            fname=$(basename "$url")
+            if curl -sfL "$url" -o "assets/bg/$fname"; then
+              sed -i "s|$url|./assets/bg/$fname|g" index.html
+            else
+              echo "Failed to download $url"
+            fi
+          done
 
-  - name: Add Android platform
-    run: npx cap add android
+      - name: Add Android platform
+        run: npx cap add android
 
-  - name: Set app name
-    run: |
-      sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' \
-        android/app/src/main/res/values/strings.xml
+      - name: Set app name
+        run: |
+          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' \
+            android/app/src/main/res/values/strings.xml
 
-  - name: Copy web assets
-    run: npx cap copy android
+      - name: Copy web assets
+        run: npx cap copy android
 
-  - name: Process custom icon and splash
-    run: |
-      # Create all necessary directories
-      for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
-        mkdir -p android/app/src/main/res/$dir
-      done
-      mkdir -p android/app/src/main/res/drawable
+      - name: Process custom icon and splash
+        run: |
+          # Create all density directories
+          for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+            mkdir -p android/app/src/main/res/$dir
+          done
+          mkdir -p android/app/src/main/res/drawable
 
-      # Check for icon.png
-      if [ -f "icon.png" ]; then
-        convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-        # ... (repeat for other sizes as in your original script)
-      fi
+          # Icon processing
+          if [ -f "icon.png" ]; then
+            convert icon.png -resize 48x48   android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+            convert icon.png -resize 72x72   android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+            convert icon.png -resize 96x96   android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            convert icon.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+            for dir in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
+              cp android/app/src/main/res/$dir/ic_launcher.png android/app/src/main/res/$dir/ic_launcher_round.png
+            done
+          fi
 
-      # Splash Fix: Target common density folders to ensure Android picks it up
-      if [ -f "splash.png" ]; then
-        echo "Processing splash.png..."
-        # Save to standard drawable
-        convert splash.png -resize 2732x2732 android/app/src/main/res/drawable/splash.png
-        # Also save to splash specific resource if using Capacitor Splash plugin
-        mkdir -p android/app/src/main/res/drawable-land-xxhdpi
-        mkdir -p android/app/src/main/res/drawable-port-xxhdpi
-        convert splash.png -resize 2732x2732 android/app/src/main/res/drawable-port-xxhdpi/splash.png
-      else
-        echo "CRITICAL: splash.png not found in root. Build will use default logo."
-        exit 1 # Fail the build so you know it's missing
-      fi
+          # Splash processing
+          if [ -f "splash.png" ]; then
+            echo "Processing splash.png..."
+            convert splash.png -resize 2732x2732 android/app/src/main/res/drawable/splash.png
+            # Target density folders for better Android compatibility
+            mkdir -p android/app/src/main/res/drawable-port-xxhdpi
+            cp android/app/src/main/res/drawable/splash.png android/app/src/main/res/drawable-port-xxhdpi/splash.png
+          else
+            echo "CRITICAL: splash.png not found. Build will fail for safety."
+            exit 1
+          fi
 
-  - name: Build APK
-    run: |
-      chmod +x android/gradlew
-      cd android && ./gradlew assembleDebug --no-daemon
+      - name: Build APK
+        run: |
+          chmod +x android/gradlew
+          cd android && ./gradlew assembleDebug --no-daemon
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HeartyNoughtsAndCrosses
+          path: android/app/build/outputs/apk/debug/app-debug.apk
