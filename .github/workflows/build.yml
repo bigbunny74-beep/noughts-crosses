@@ -77,7 +77,7 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
-      - name: Fix SDK versions and App Name
+      - name: Fix SDK versions, App Name & Permissions
         run: |
           # 1. Update SDK versions in variables.gradle
           SEDCONFIG="android/variables.gradle"
@@ -92,6 +92,15 @@ jobs:
           # 3. Set the friendly app name
           STRINGS="android/app/src/main/res/values/strings.xml"
           sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' "$STRINGS"
+          
+          # 4. Add VIBRATE permission for Haptics in AndroidManifest.xml
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            # Insert the permission before the <application> tag if it doesn't exist
+            if ! grep -q "android.permission.VIBRATE" "$MANIFEST"; then
+              sed -i '/<application/i \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST"
+            fi
+          fi
 
       - name: Copy web assets
         run: npx cap copy android
