@@ -77,7 +77,7 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
-      - name: Fix SDK versions, App Name & Permissions
+      - name: Fix SDK versions, App Name & Orientation
         run: |
           # 1. Update SDK versions in variables.gradle
           SEDCONFIG="android/variables.gradle"
@@ -93,13 +93,17 @@ jobs:
           STRINGS="android/app/src/main/res/values/strings.xml"
           sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Hearty Noughts \&amp; Crosses</string>|g' "$STRINGS"
           
-          # 4. Add VIBRATE permission for Haptics in AndroidManifest.xml
+          # 4. Manifest modifications: Permissions and Orientation Lock
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           if [ -f "$MANIFEST" ]; then
-            # Insert the permission before the <application> tag if it doesn't exist
+            # Add VIBRATE permission
             if ! grep -q "android.permission.VIBRATE" "$MANIFEST"; then
               sed -i '/<application/i \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST"
             fi
+
+            # LOCK TO PORTRAIT MODE
+            # We target the <activity> tag for MainActivity and add the orientation attribute
+            sed -i 's/android:name="MainActivity"/android:name="MainActivity" android:screenOrientation="portrait"/' "$MANIFEST"
           fi
 
       - name: Copy web assets
@@ -118,29 +122,20 @@ jobs:
 
           # 2. Icon processing
           if [ -f "icon.png" ]; then
-            # FIX: Overwrite the existing default color file to avoid "Duplicate resources" error
             echo '<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#F7B9C9</color></resources>' > android/app/src/main/res/values/ic_launcher_background.xml
-
-            # Monochrome Layer
             convert icon.png -colorspace gray android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png
-
-            # Adaptive XML
             printf '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@color/ic_launcher_background"/>\n    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n    <monochrome android:drawable="@mipmap/ic_launcher_monochrome"/>\n</adaptive-icon>' > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
             cp android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-
-            # Foreground & Legacy PNGs
             convert icon.png -resize 432x432 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
             convert icon.png -resize 324x324 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
             convert icon.png -resize 216x216 android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
             convert icon.png -resize 162x162 android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
             convert icon.png -resize 108x108 android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
-
             convert icon.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
             convert icon.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
             convert icon.png -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
             convert icon.png -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
             convert icon.png -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-            
             for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
               cp "android/app/src/main/res/mipmap-$d/ic_launcher.png" "android/app/src/main/res/mipmap-$d/ic_launcher_round.png"
             done
