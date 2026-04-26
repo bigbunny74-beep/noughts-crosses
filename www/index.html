@@ -2546,7 +2546,7 @@
 
   </div>
 
-  <div class="menu-footer">&copy; 2026 Retro Gamer Slugs v1.2</div>
+  <div class="menu-footer">&copy; 2026 Retro Gamer Slugs v1.3</div>
 </div>
 
 <!-- Toggle switch styles (inline so they can read CSS vars) -->
@@ -3750,22 +3750,27 @@ function uRender() {
   // Shared status bar (same element used by classic)
   var res = us.result;
   var statusStr;
-  if (res) {
+  if (_tutorialActive) {
+    statusStr = 'Hearty is tutoring 🎓';
+  } else if (_uWaitingNewGame) {
+    statusStr = 'Press New Game to start! 🎮';
+  } else if (res) {
     if (res.winner === 'draw') statusStr = "Ultimate Draw!";
     else if (res.winner === 'X') statusStr = playerNames.X + ' wins Ultimate!';
     else statusStr = us.mode==='2p' ? playerNames.O + ' wins Ultimate!' : 'Hearty wins Ultimate!';
   } else if (us.aiThinking) {
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : 'Hearty is thinking...';
+    statusStr = 'Hearty is thinking...';
   } else {
     var turnName = us.xIsNext ? playerNames.X : (us.mode==='2p' ? playerNames.O : 'Hearty');
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : (turnName + (us.xIsNext ? ' (X)' : ' (O)') + "'s turn");
+    statusStr = turnName + (us.xIsNext ? ' (X)' : ' (O)') + "'s turn";
   }
   // Update the shared status bar elements
   if (dom.statusText) {
     dom.statusText.textContent = statusStr;
-    dom.statusText.className = 'status-text' + ((res&&res.winner==='X')?' win-x':(res&&res.winner==='O')?' win-o':'');
+    const _uStatusLocked = !_tutorialActive && _uWaitingNewGame;
+    dom.statusText.className = 'status-text' + ((!_uStatusLocked&&res&&res.winner==='X')?' win-x':(!_uStatusLocked&&res&&res.winner==='O')?' win-o':'');
   }
-  if (dom.statusBar) dom.statusBar.className = 'status-bar' + (res?' result':'');
+  if (dom.statusBar) { const _uSL = !_tutorialActive && _uWaitingNewGame; dom.statusBar.className = 'status-bar' + (!_uSL&&res?' result':''); }
 
   // Shared score numbers
   if (dom.scoreXVal) dom.scoreXVal.textContent = us.scoresX || 0;
@@ -3828,7 +3833,7 @@ function uHandleClick(boardIdx, cellIdx) {
 
   var _uTutWaitNow = _tutorialActive && TUTORIALS[_tutorialMode] && TUTORIALS[_tutorialMode][_tutorialStep] && TUTORIALS[_tutorialMode][_tutorialStep].waitForMove;
   if (_tutorialActive && !_uTutWaitNow) return;
-  if (_uWaitingNewGame) return; // waiting for New Game button
+  if (!_tutorialActive && _uWaitingNewGame) return; // waiting for New Game button
   if (!uState) return;
   if (uState.result) return;
   if (uState.aiThinking) return;
@@ -3984,22 +3989,37 @@ function uNewGame() {
   uState.scoresO = prevScores.scoresO;
   _syncNewGameBtn();
   state.bubbleLockedUntil = 0; // reset any stale lock before speaking
+  if (_uFromMenu) {
+    // Entering mode from menu — keep board locked until player presses New Game button
+    _uWaitingNewGame = true;
+    _uFromMenu = false;
+    speak(pickArr([
+      'Ultimate Noughts & Crosses! Win three mini-boards in a row to win! Press New Game to start! 🎮',
+      'The mega-game begins! Each move sends your opponent to a specific board! Press New Game to start! 🎮',
+      'Ultimate mode! Think beyond the grid — think about the META-grid! 🧠 Press New Game to start!',
+      'Nine boards, one winner! Your move sends them to the matching board! Press New Game to start! 🎮'
+    ]), true);
+    state.bubbleLockedUntil = Date.now() + 10000;
+    uRender();
+    return;
+  }
+  // New Game button pressed — board is now live
+  _uWaitingNewGame = false;
+  _uFromMenu = false;
   speak(pickArr([
-    'Ultimate Noughts & Crosses! Win three mini-boards in a row to win! Press New Game to start! 🎮',
-    'The mega-game begins! Each move sends your opponent to a specific board! Press New Game to start! 🎮',
-    'Ultimate mode! Think beyond the grid — think about the META-grid! 🧠 Press New Game to start!',
-    'Nine boards, one winner! Your move sends them to the matching board! Press New Game to start! 🎮'
-  ]), true); // force=true — always show intro even if locked from previous mode
+    'Ultimate Noughts & Crosses! 🧠 Let the mega-game begin!',
+    'The mega-game begins! Each move sends your opponent to a specific board!',
+    'Ultimate mode — think beyond the grid! 🧠',
+    'Nine boards, one winner! Your move sends them to the matching board! 🎮'
+  ]), true);
   state.bubbleLockedUntil = Date.now() + 10000;
   uRender();
-  _uWaitingNewGame = false; // New Game pressed — board is now live
   // AI only fires when New Game button is pressed (not menu entry, not tutorial)
-  if (!_uFromMenu && !_tutorialActive && uState.mode === 'ai' && !uState.xIsNext) {
+  if (!_tutorialActive && uState.mode === 'ai' && !uState.xIsNext) {
     uState.aiThinking = true;
     uRender();
     _uAiTimeout = setTimeout(uDoAIMove, 1200);
   }
-  _uFromMenu = false;
 }
 
 function uUndoMove() {
@@ -4205,22 +4225,27 @@ function mRender() {
 
   // Shared status bar
   var statusStr;
-  if (res) {
+  if (_tutorialActive) {
+    statusStr = 'Hearty is tutoring 🎓';
+  } else if (_mWaitingNewGame) {
+    statusStr = 'Press New Game to start! 🎮';
+  } else if (res) {
     if (res.winner === 'draw') statusStr = "It's a Draw!";
     else if (res.winner === 'X') statusStr = playerNames.X + ' wins Misère!';
     else statusStr = ms.mode === '2p' ? playerNames.O + ' wins Misère!' : (res.loser === 'O' ? 'You win! Hearty trapped itself! 😅' : 'Hearty wins! You completed a line! 😬');
   } else if (ms.aiThinking) {
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : 'Hearty is thinking...';
+    statusStr = 'Hearty is thinking...';
   } else {
     var turnName = ms.xIsNext ? playerNames.X : (ms.mode === '2p' ? playerNames.O : 'Hearty');
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : (turnName + (ms.xIsNext ? ' (X)' : ' (O)') + "'s turn");
+    statusStr = turnName + (ms.xIsNext ? ' (X)' : ' (O)') + "'s turn";
   }
   if (dom.statusText) {
     dom.statusText.textContent = statusStr;
+    const _mStatusLocked = !_tutorialActive && _mWaitingNewGame;
     dom.statusText.className = 'status-text' +
-      ((res && res.winner === 'X') ? ' win-x' : (res && res.winner === 'O') ? ' win-o' : '');
+      ((!_mStatusLocked&&res && res.winner === 'X') ? ' win-x' : (!_mStatusLocked&&res && res.winner === 'O') ? ' win-o' : '');
   }
-  if (dom.statusBar) dom.statusBar.className = 'status-bar' + (res ? ' result' : '');
+  if (dom.statusBar) { const _mSL = !_tutorialActive && _mWaitingNewGame; dom.statusBar.className = 'status-bar' + (!_mSL&&res ? ' result' : ''); }
 
   // Scores
   if (dom.scoreXVal) dom.scoreXVal.textContent = ms.scoresX || 0;
@@ -4261,7 +4286,7 @@ function mRender() {
 function mHandleClick(idx) {
   var _mTutWait = _tutorialActive && TUTORIALS[_tutorialMode] && TUTORIALS[_tutorialMode][_tutorialStep] && TUTORIALS[_tutorialMode][_tutorialStep].waitForMove;
   if (_tutorialActive && !_mTutWait) return;
-  if (_mWaitingNewGame) return; // waiting for New Game button
+  if (!_tutorialActive && _mWaitingNewGame) return; // waiting for New Game button
   if (!mState) return;
   if (mState.result) return;
   if (mState.aiThinking) return;
@@ -4430,22 +4455,37 @@ function mNewGame() {
   mState.scoresO = prev.scoresO;
   _syncNewGameBtn();
   state.bubbleLockedUntil = 0;
+  if (_mFromMenu) {
+    // Entering mode from menu — keep board locked until player presses New Game button
+    _mWaitingNewGame = true;
+    _mFromMenu = false;
+    speak(pickArr([
+      'Misère mode! Get three in a row and you LOSE! 😈 Press New Game to start!',
+      'Reverse rules! Avoid the line — force your opponent into it! Press New Game to start! 🎮',
+      'Misère Noughts & Crosses — the loser makes a line! Press New Game to start!',
+      'Think backwards! Three in a row is BAD! Press New Game to start! 🎮',
+    ]), true);
+    state.bubbleLockedUntil = Date.now() + 10000;
+    mRender();
+    return;
+  }
+  // New Game button pressed — board is now live
+  _mWaitingNewGame = false;
+  _mFromMenu = false;
   speak(pickArr([
-    'Misère mode! Get three in a row and you LOSE! 😈 Press New Game to start!',
-    'Reverse rules! Avoid the line — force your opponent into it! Press New Game to start! 🎮',
-    'Misère Noughts & Crosses — the loser makes a line! Press New Game to start!',
-    'Think backwards! Three in a row is BAD! Press New Game to start! 🎮',
-  ]), true); // force=true — always show intro
+    'Misère mode! Get three in a row and you LOSE! 😈',
+    'Reverse rules! Avoid the line — force your opponent into it!',
+    'Misère Noughts & Crosses — the loser makes a line!',
+    'Think backwards! Three in a row is BAD! 🎮',
+  ]), true);
   state.bubbleLockedUntil = Date.now() + 10000;
   mRender();
-  _mWaitingNewGame = false; // New Game pressed — board is now live
   // AI only fires when New Game button is pressed (not menu entry, not tutorial)
-  if (!_mFromMenu && !_tutorialActive && mState.mode === 'ai' && !mState.xIsNext) {
+  if (!_tutorialActive && mState.mode === 'ai' && !mState.xIsNext) {
     mState.aiThinking = true;
     mRender();
     _mAiTimeout = setTimeout(mDoAIMove, 1200);
   }
-  _mFromMenu = false;
 }
 
 function mUndoMove() {
@@ -5333,18 +5373,25 @@ function render(){
   // Status text
   const res = s.result;
   let statusStr;
-  if(res){
+  if(_tutorialActive){
+    statusStr = 'Hearty is tutoring 🎓';
+  } else if(_classicWaitingNewGame){
+    statusStr = 'Press New Game to start! 🎮';
+  } else if(_blitzArmed){
+    statusStr = 'Press New Game to start! 🎮';
+  } else if(res){
     if(res.winner==='draw') statusStr = "It's a Draw!";
     else if(res.winner==='X') statusStr = `${playerNames.X} wins!`;
     else statusStr = s.mode==='2p' ? `${playerNames.O} wins!` : 'Hearty wins!';
   } else if(s.aiThinking){
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : 'Hearty is thinking...';
+    statusStr = 'Hearty is thinking...';
   } else {
-    statusStr = _tutorialActive ? 'Hearty is tutoring 🎓' : `${s.xIsNext ? (s.mode==='2p'?`${playerNames.X} (X)`:'Your') : (s.mode==='2p'?`${playerNames.O} (O)`:"Hearty's")} turn`;
+    statusStr = `${s.xIsNext ? (s.mode==='2p'?`${playerNames.X} (X)`:'Your') : (s.mode==='2p'?`${playerNames.O} (O)`:"Hearty's")} turn`;
   }
   dom.statusText.textContent = statusStr;
-  dom.statusText.className = 'status-text' + ((res&&res.winner==='X')?' win-x':(res&&res.winner==='O')?' win-o':'');
-  dom.statusBar.className = 'status-bar' + (res?' result':'');
+  const _statusLocked = !_tutorialActive && (_classicWaitingNewGame || _blitzArmed);
+  dom.statusText.className = 'status-text' + ((!_statusLocked&&res&&res.winner==='X')?' win-x':(!_statusLocked&&res&&res.winner==='O')?' win-o':'');
+  dom.statusBar.className = 'status-bar' + (!_statusLocked&&res?' result':'');
 
   // Board cells
   s.board.forEach((val, idx) => {
@@ -5352,7 +5399,8 @@ function render(){
     const isWin = res && res.line && res.line.indexOf(idx) !== -1;
     const _tutBlocked = _tutorialActive && !(TUTORIALS[_tutorialMode] && TUTORIALS[_tutorialMode][_tutorialStep] && TUTORIALS[_tutorialMode][_tutorialStep].waitForMove);
     const _tutWFM = _tutorialActive && !_tutBlocked;
-    const isDisabled = !!res || s.aiThinking || _tutBlocked ||
+    const _waitLocked = !_tutorialActive && (_classicWaitingNewGame || _blitzArmed);
+    const isDisabled = _waitLocked || !!res || s.aiThinking || _tutBlocked ||
                        (!_tutWFM && s.mode==='ai'&&!s.xIsNext);
     const newClass = `cell${isWin?' win-cell':''}${!!val?' filled':''}${isDisabled?' disabled':''}`;
     const _cHL = cell.classList.contains('tutorial-highlight');
@@ -5668,6 +5716,8 @@ function handleClick(idx){
 
   const _cTutWait = _tutorialActive && TUTORIALS[_tutorialMode] && TUTORIALS[_tutorialMode][_tutorialStep] && TUTORIALS[_tutorialMode][_tutorialStep].waitForMove;
   if (_tutorialActive && !_cTutWait) return;
+  if (!_tutorialActive && _classicWaitingNewGame) return; // waiting for New Game button
+  if (!_tutorialActive && _blitzArmed) return; // waiting for Start Game button
   const cellEl = dom.cells[idx];
   if(cellEl) cellEl.blur();
   if(state.board[idx] || state.result || (!_cTutWait && state.mode==='ai'&&!state.xIsNext)){
@@ -5735,6 +5785,7 @@ function scheduleAI(){
 
 // ── newGame ──
 function newGame(){
+  _classicWaitingNewGame = false; // New Game pressed — board is now live
 
   _aiGen++; clearTimeout(aiTimeout); clearTimeout(watchTimeout);
   clearWinLine();
@@ -5779,7 +5830,7 @@ function switchMode(m){
     winStreakX:0, winStreakP2:0, lossStreak:0, undoStack:[], seriesX:0, seriesO:0, seriesD:0,
     bubbleLockedUntil:0});
   SFX.newGame();
-
+  _classicWaitingNewGame = true;
 
   if(m==='2p') showNameModal(false);
   else speak('Mode changed — press New Game to start! 🎮', true);
@@ -6129,6 +6180,7 @@ function setDiff(d){
     dom.cells.forEach(c=>{ c.dataset.val=''; c.innerHTML='<div class="cell-inner"></div>'; });
     setState({board:Array(9).fill(null), result:null, aiThinking:false,
       showCup:false, undoStack:[], bubbleLockedUntil:0});
+    _classicWaitingNewGame = true;
   }
   speak('Difficulty set to ' + _dl + ' — press New Game to start! 🎮', true);
 }
@@ -6140,7 +6192,7 @@ function setSeriesMode(m){
   // Reset any existing intro lock first so the new message always shows immediately
   state.bubbleLockedUntil = 0;
   setState({seriesMode:m, seriesX:0, seriesO:0, seriesD:0, scores:{X:0, O_Human:0, O_Hearty:0, draw:0}, winStreakX:0, winStreakP2:0, lossStreak:0, board:Array(9).fill(null), result:null, showCup:false, undoStack:[]});
-
+  _classicWaitingNewGame = true;
 
   const msgs = {none:"Free play — press New Game to start! 🎮", bo3:"Best of 3 — first to 2 wins! Press New Game to start! 🎮", bo5:"Best of 5 — first to 3 wins! Press New Game to start! 🎮"};
   speak(msgs[m], true);
@@ -6933,6 +6985,8 @@ function renderThemeSwatches() {
     if (_fishSVGCache[col]) return _fishSVGCache[col];
     var c = col.replace('#','%23');
     var uri = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 20'%3E%3Cellipse cx='24' cy='10' rx='16' ry='7' fill='" + c + "'/%3E%3Cpolygon points='8%2C10 2%2C17 2%2C3' fill='" + c + "'/%3E%3Cpolygon points='30%2C4 38%2C0 34%2C7' fill='" + c + "' opacity='0.75'/%3E%3Ccircle cx='36' cy='9' r='2.5' fill='white'/%3E%3Ccircle cx='36.5' cy='9' r='1.2' fill='%230c1a2e'/%3E%3C/svg%3E";
+    _fishSVGCache[col] = uri;
+    return uri;
   }
 
   function spawnBubble() {
@@ -7285,6 +7339,7 @@ var _uFromMenu      = false;     // declared here for clarity (also used below)
 var _mFromMenu      = false;
 var _uWaitingNewGame = false;    // board locked until New Game pressed after mode/diff switch
 var _mWaitingNewGame = false;
+var _classicWaitingNewGame = false; // board locked until New Game pressed after classic mode/diff/series switch
 
 // ── Sync New Game button disabled state during tutorial ─────────────────
 function _syncNewGameBtn() {
@@ -7367,6 +7422,9 @@ function startTutorial() {
   _tutorialMode   = _tutorialCurrentGame();
   _tutorialActive = true;
   _tutorialStep   = 0;
+  _classicWaitingNewGame = false; // tutorial owns the board — release any new-game lock
+  _uWaitingNewGame = false;
+  _mWaitingNewGame = false;
   // Cancel all in-flight AI so Hearty can't play on the tutorial board
   _aiGen++;
   clearTimeout(aiTimeout); clearTimeout(watchTimeout);
@@ -7593,6 +7651,7 @@ setInterval(()=>{
 })();
 initLayout();
 if (window._attachParticleCanvas) window._attachParticleCanvas();
+_classicWaitingNewGame = true; // board locked on first load until New Game is pressed
 render();
 if (window._prewarmGradCache) window._prewarmGradCache();
 // Apply uniform scale so the 390×780 canvas fits any screen in both axes.
