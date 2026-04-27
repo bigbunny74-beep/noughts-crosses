@@ -90,8 +90,8 @@
     to   { opacity:1; transform: translateY(0); }
   }
   @keyframes pulseGlow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(255,120,180,0); }
-    50%      { box-shadow: 0 0 28px 8px rgba(255,120,180,0.2); }
+    0%,100% { filter: drop-shadow(0 0 0px rgba(255,120,180,0)); }
+    50%      { filter: drop-shadow(0 0 8px rgba(255,120,180,0.35)); }
   }
   @keyframes wiggle {
     0%,100% { transform: translateX(-50%) rotate(0deg); }
@@ -169,8 +169,8 @@
     --tutorial-glow0: rgba(255,120,180,0);
   }
   @keyframes tutorialPulse {
-    0%,100% { box-shadow: 0 0 0 0 var(--tutorial-glow0); transform: scale(1); }
-    50%      { box-shadow: 0 0 0 6px var(--tutorial-glow);  transform: scale(1.06); }
+    0%,100% { filter: drop-shadow(0 0 0px var(--tutorial-glow0)); transform: scale(1); }
+    50%      { filter: drop-shadow(0 0 6px var(--tutorial-glow));  transform: scale(1.06); }
   }
   @keyframes tutorialBadgePop {
     0%   { transform: scale(0) rotate(-15deg); opacity:0; }
@@ -1717,7 +1717,7 @@
   /* ── MODAL OVERLAY ── */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.65);
     display: flex; align-items: center; justify-content: center;
     padding: 16px;
   }
@@ -1758,7 +1758,7 @@
   /* ── MATCH WINNER BANNER ── */
   .match-banner {
     position: fixed; inset: 0; z-index: 300;
-    background: rgba(0,0,0,0.75); backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.82);
     display: flex; align-items: center; justify-content: center;
   }
   .match-banner.hidden { display: none; }
@@ -1863,8 +1863,7 @@
   /* Overlay backdrop */
   .menu-overlay {
     position: fixed; inset: 0; z-index: 450;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.6);
     opacity: 0; pointer-events: none;
     transition: opacity 0.3s;
   }
@@ -2546,7 +2545,7 @@
 
   </div>
 
-  <div class="menu-footer">&copy; 2026 Retro Gamer Slugs v1.3</div>
+  <div class="menu-footer">&copy; 2026 Retro Gamer Slugs v1.2</div>
 </div>
 
 <!-- Toggle switch styles (inline so they can read CSS vars) -->
@@ -3021,17 +3020,41 @@ document.addEventListener('visibilitychange', function(){
   _appVisible = !document.hidden;
   if(_appVisible){
     document.body.classList.remove('app-hidden');
+    // Restart firework worker if particles were mid-flight
     if(_fwWorker) _fwWorker.postMessage({type:'resume'});
     else if(_fbParticles.length>0 && !_fbRafId) _fbRafId=requestAnimationFrame(_fbAnimLoop);
+    // Restart music
     if(window._musicHandleVisibility) window._musicHandleVisibility(true);
-    if(_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+    else if(_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+    // Restart particle theme spawners
+    if(window._particleHandleVisibility) window._particleHandleVisibility(true);
+    // Restart blitz timer if a blitz game was running
+    if(typeof _blitzMode !== 'undefined' && _blitzMode && typeof blitzStart === 'function') {
+      blitzStart();
+    }
+    // Re-schedule any AI move that was cancelled
+    if(state && state.mode === 'ai' && !state.xIsNext && !state.result && typeof scheduleAI === 'function') {
+      scheduleAI();
+    }
+    if(typeof uState !== 'undefined' && uState && uState.mode === 'ai' && !uState.xIsNext && !uState.result) {
+      if(typeof uDoAIMove === 'function') _uAiTimeout = setTimeout(uDoAIMove, 600);
+    }
+    if(typeof mState !== 'undefined' && mState && mState.mode === 'ai' && !mState.xIsNext && !mState.result) {
+      if(typeof mDoAIMove === 'function') _mAiTimeout = setTimeout(mDoAIMove, 600);
+    }
   } else {
     document.body.classList.add('app-hidden');
+    // Pause firework worker
     if(_fwWorker) _fwWorker.postMessage({type:'pause'});
+    // Pause music and suspend audio context fully
     if(window._musicHandleVisibility) window._musicHandleVisibility(false);
-    if(_audioCtx && _audioCtx.state === 'running' && !window._musicHandleVisibility) {
-      _audioCtx.suspend();
-    }
+    else if(_audioCtx && _audioCtx.state === 'running') _audioCtx.suspend();
+    // Stop all particle spawner timers and clear live DOM particles
+    if(window._particleHandleVisibility) window._particleHandleVisibility(false);
+    // Cancel any pending AI moves and blitz timer — they'll re-trigger on return
+    clearTimeout(aiTimeout); clearTimeout(_uAiTimeout); clearTimeout(_mAiTimeout);
+    clearTimeout(watchTimeout);
+    if(typeof blitzStop === 'function') blitzStop();
   }
 });
 
@@ -6387,9 +6410,9 @@ function renderThemeSwatches() {
       '92% {transform:translate(-14px,  var(--py));opacity:var(--pa)}',
       '100%{transform:translate(-70px,  var(--py));opacity:0}',
       '}',
-      '@keyframes fishBob{0%,100%{margin-top:0}50%{margin-top:-5px}}',
+      '@keyframes fishBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}',
       '.ap-fish{animation-timing-function:linear;animation-fill-mode:both;}',
-      '.ap-fish-inner{width:100%;height:100%;background:center/contain no-repeat;animation-name:fishBob;animation-timing-function:ease-in-out;animation-iteration-count:infinite;}',
+      '.ap-fish-inner{width:100%;height:100%;background:center/contain no-repeat;animation-name:fishBob;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:transform;}',
 
       // BUTTERFLIES L->R and R->L
       '@keyframes bflyLR{',
@@ -6620,8 +6643,8 @@ function renderThemeSwatches() {
     }
     _heartTimer = setInterval(function () {
       if (!_appVisible) return;
-      if (_pcnt.heart < 12) spawnHeart();
-    }, 600);
+      if (_pcnt.heart < 8) spawnHeart();
+    }, 1500);
   }
   function stopHearts() {
     clearInterval(_heartTimer); _heartTimer = null;
@@ -6913,13 +6936,13 @@ function renderThemeSwatches() {
       flip.style.cssText = 'width:100%;height:100%;transform:scaleX(-1);';
       var inner = document.createElement('div');
       inner.className = 'ap-bat-inner';
-      inner.style.cssText = 'background-image:url("' + BAT_SVG + '");animation-duration:' + rnd(0.15, 0.28) + 's';
+      inner.style.cssText = 'background-image:url("' + BAT_SVG + '");animation-duration:' + rnd(0.45, 0.65) + 's';
       flip.appendChild(inner);
       outer.appendChild(flip);
     } else {
       var inner = document.createElement('div');
       inner.className = 'ap-bat-inner';
-      inner.style.cssText = 'background-image:url("' + BAT_SVG + '");animation-duration:' + rnd(0.15, 0.28) + 's';
+      inner.style.cssText = 'background-image:url("' + BAT_SVG + '");animation-duration:' + rnd(0.45, 0.65) + 's';
       outer.appendChild(inner);
     }
     getLayer().appendChild(outer);
@@ -7026,13 +7049,13 @@ function renderThemeSwatches() {
       flip.style.cssText = 'width:100%;height:100%;transform:scaleX(-1);';
       var inner = document.createElement('div');
       inner.className = 'ap-fish-inner';
-      inner.style.cssText = 'background-image:url("' + fishSVG(col) + '");animation-duration:' + rnd(1.2, 2.2) + 's';
+      inner.style.cssText = 'background-image:url("' + fishSVG(col) + '");animation-duration:' + rnd(2.0, 3.5) + 's';
       flip.appendChild(inner);
       outer.appendChild(flip);
     } else {
       var inner = document.createElement('div');
       inner.className = 'ap-fish-inner';
-      inner.style.cssText = 'background-image:url("' + fishSVG(col) + '");animation-duration:' + rnd(1.2, 2.2) + 's';
+      inner.style.cssText = 'background-image:url("' + fishSVG(col) + '");animation-duration:' + rnd(2.0, 3.5) + 's';
       outer.appendChild(inner);
     }
     getLayer().appendChild(outer);
@@ -7043,17 +7066,17 @@ function renderThemeSwatches() {
   var _oceanSeeds = [];
   function startOcean() {
     if (_oceanTimer) return;
-    for (var i = 0; i < 12; i++) {
-      (function(d){ _oceanSeeds.push(setTimeout(function(){ if(_activeTheme==='ocean') spawnBubble(); }, d)); })(i*300);
+    for (var i = 0; i < 8; i++) {
+      (function(d){ _oceanSeeds.push(setTimeout(function(){ if(_activeTheme==='ocean') spawnBubble(); }, d)); })(i*400);
     }
     for (var j = 0; j < 3; j++) {
       (function(d){ _oceanSeeds.push(setTimeout(function(){ if(_activeTheme==='ocean') spawnFish(); }, d)); })(j*1200);
     }
     _oceanTimer = setInterval(function () {
       if (!_appVisible) return;
-      if (_pcnt.bubble < 22) spawnBubble();
-      if (_pcnt.fish < 4) spawnFish();
-    }, 500);
+      if (_pcnt.bubble < 14) spawnBubble();
+      if (_pcnt.fish < 5) spawnFish();
+    }, 1200);
   }
   function stopOcean() { clearInterval(_oceanTimer); _oceanTimer = null; _oceanSeeds.forEach(clearTimeout); _oceanSeeds = []; }
 
@@ -7089,13 +7112,13 @@ function renderThemeSwatches() {
       flip.style.cssText = 'width:100%;height:100%;transform:scaleX(-1);';
       var inner = document.createElement('div');
       inner.className = 'ap-butterfly-inner';
-      inner.style.cssText = 'background-image:url("' + butterflySVG(col) + '");animation-duration:' + rnd(0.22, 0.46) + 's';
+      inner.style.cssText = 'background-image:url("' + butterflySVG(col) + '");animation-duration:' + rnd(0.7, 1.0) + 's';
       flip.appendChild(inner);
       outer.appendChild(flip);
     } else {
       var inner = document.createElement('div');
       inner.className = 'ap-butterfly-inner';
-      inner.style.cssText = 'background-image:url("' + butterflySVG(col) + '");animation-duration:' + rnd(0.22, 0.46) + 's';
+      inner.style.cssText = 'background-image:url("' + butterflySVG(col) + '");animation-duration:' + rnd(0.7, 1.0) + 's';
       outer.appendChild(inner);
     }
     getLayer().appendChild(outer);
@@ -7111,8 +7134,8 @@ function renderThemeSwatches() {
     }
     _summerTimer = setInterval(function () {
       if (!_appVisible) return;
-      if (_pcnt.butterfly < 10) spawnButterfly();
-    }, 1000);
+      if (_pcnt.butterfly < 5) spawnButterfly();
+    }, 2000);
   }
   function stopSummer() { clearInterval(_summerTimer); _summerTimer = null; _summerSeeds.forEach(clearTimeout); _summerSeeds = []; }
 
@@ -7146,6 +7169,18 @@ function renderThemeSwatches() {
       default:          startHearts();    break;
     }
   }
+
+  // ── Visibility: fully stop on hide, restart on show ──────────────────
+  window._particleHandleVisibility = function(visible) {
+    if (visible) {
+      // Restart the current theme's spawner — particles were cleared on hide
+      if (_activeTheme) startTheme(_activeTheme);
+    } else {
+      // Kill every spawner timer and remove all live particle DOM nodes.
+      // This drops all compositor layers immediately — the biggest battery win.
+      stopAll();
+    }
+  };
 
   // ── Attach layer + boot ───────────────────────────────────────────────
   window._attachParticleCanvas = function () {
